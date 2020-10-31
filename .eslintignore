@@ -1,0 +1,5 @@
+/assets
+/backend
+/node_modules
+/public
+serviceWorker.js

@@ -1,0 +1,6 @@
+/* eslint-disable import/prefer-default-export */
+export const TICKET_PAYMENT_REQUEST = 'TICKET_PAYMENT_REQUEST';
+export const TICKET_PAYMENT_FAILURE = 'TICKET_PAYMENT_FAILURE';
+export const TICKET_PAYMENT_SUCCESS = 'TICKET_PAYMENT_SUCCESS';
+
+export const TICKET_PAYMENT_CLEAR = 'TICKET_PAYMENT_CLEAR';

@@ -1,0 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+export const CLIENT_SEANCES_REQUEST = 'CLIENT_SEANCES_REQUEST';
+export const CLIENT_SEANCES_FAILURE = 'CLIENT_SEANCES_FAILURE';
+export const CLIENT_SEANCES_SUCCESS = 'CLIENT_SEANCES_SUCCESS';
+export const CLIENT_SEANCES_CLEAR = 'CLIENT_SEANCES_CLEAR';

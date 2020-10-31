@@ -1,0 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+export const CLIENT_MOVIES_REQUEST = 'CLIENT_MOVIES_REQUEST';
+export const CLIENT_MOVIES_FAILURE = 'CLIENT_MOVIES_FAILURE';
+export const CLIENT_MOVIES_SUCCESS = 'CLIENT_MOVIES_SUCCESS';
+export const CLIENT_MOVIES_CLEAR = 'CLIENT_MOVIES_CLEAR';
