@@ -1,9 +1,11 @@
 # Диплом
 
-## Доступные команды фронтнда
+## [Backend](https://github.com/Alex-m18/ffs21/tree/backend)
 
-В папке проекта можно запустить:
+## [Фронтенд](https://github.com/Alex-m18/ffs21)
 
-### `yarn start`
+Для установки необходимо запустить в командной строке `yarn install`
 
-запуск фронтенд dev-сервера на https://localhost:3000
+Запуск dev-сервера - `yarn start`
+
+По умолчанию сервер запускается на `https://localhost:3000`
