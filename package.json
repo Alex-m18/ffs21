@@ -1,0 +1,29 @@
+{
+  "name": "13-diploma-backend",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "yarn install",
+    "start": "forever server.js",
+    "watch": "forever -w server.js",
+    "db-init": "yarn db-reset && yarn db-migrate && yarn db-seed",
+    "db-reset": "db-migrate reset",
+    "db-migrate": "db-migrate up",
+    "db-seed": "npx ./database/seeders/databaseSeeder.js"
+  },
+  "dependencies": {
+    "db-migrate": "^0.11.11",
+    "db-migrate-sqlite3": "^0.4.0",
+    "dotenv": "^8.2.0",
+    "forever": "^3.0.2",
+    "koa": "^2.13.0",
+    "koa-body": "^4.2.0",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^9.4.0",
+    "koa2-cors": "^2.0.6",
+    "moment": "^2.29.1",
+    "sqlite3": "^5.0.0",
+    "uuid": "^8.3.1"
+  }
+}
