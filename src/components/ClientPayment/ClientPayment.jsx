@@ -34,15 +34,13 @@ export default function ClientPayment() {
 
   let selectedSum;
   let selectedSeats;
-  let seatsString;
+  let seatsString = '';
   if (seats) {
     selectedSum = seats
       .filter((o) => o.selected)
       .reduce((acc, o) => acc + (o.type === 'standart' ? chosenSeance.price : chosenSeance.priceVip), 0);
     selectedSeats = seats.filter((o) => o.selected);
-    seatsString = selectedSeats
-      .slice(1)
-      .reduce((acc, o) => `${acc}, ${o.number}`, selectedSeats[0].number);
+    seatsString = selectedSeats.map((o) => o.number).join(', ');
   }
 
   const handleToHomeClick = () => navigate('/');

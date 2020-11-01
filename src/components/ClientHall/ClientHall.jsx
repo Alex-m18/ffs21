@@ -24,6 +24,7 @@ export default function ClientHall() {
   let movie;
   let hall;
   let seats;
+  let selectedSeats = [];
   if (chosenSeance) {
     movie = chosenSeance.movie;
     hall = chosenSeance.hall;
@@ -45,9 +46,10 @@ export default function ClientHall() {
 
   let selectedSum;
   if (seats) {
-    selectedSum = seats
-      .filter((o) => o.selected)
-      .reduce((acc, o) => acc + (o.state === 'standart' ? chosenSeance.price : chosenSeance.priceVip), 0);
+    selectedSeats = seats.filter((o) => o.selected);
+    selectedSum = selectedSeats.reduce((acc, o) => (
+      acc + (o.state === 'standart' ? chosenSeance.price : chosenSeance.priceVip)
+    ), 0);
   }
 
   const handleSelectClick = (id) => {
@@ -61,6 +63,7 @@ export default function ClientHall() {
   };
 
   const handleSubmitClick = () => {
+    if (!selectedSeats.length) return;
     dispatch(changeClientState({
       chosenSeats: '',
     }));
@@ -130,7 +133,7 @@ export default function ClientHall() {
               </div>
             </div>
 
-            <AcceptinButton title="Забронировать" onClick={handleSubmitClick} />
+            { selectedSeats.length && <AcceptinButton title="Забронировать" onClick={handleSubmitClick} /> }
           </section>
         </main>
       )}
