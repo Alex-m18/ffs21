@@ -5,6 +5,16 @@ import { clientHallsRequestEpic } from './clientHalls/epics';
 import { clientMoviesRequestEpic } from './clientMovies/epics';
 import { ticketPaymentRequestEpic } from './payment/epics';
 import { ticketRequestEpic } from './ticket/epics';
+import {
+  adminHallsRequestEpic,
+  adminHallsRemoveEpic,
+  adminHallsAddEpic,
+  adminHallsUpdateEpic,
+} from './adminHalls/epics';
+import { adminSeatsRequestEpic, adminSeatsUpdateEpic } from './adminSeats/epics';
+import { adminMoviesSaveEpic, adminMoviesRequestEpic } from './adminMovies/epics';
+import { adminSeancesRequestEpic, adminSeancesSaveEpic } from './adminSeances/epics';
+import { adminOpenSaleRequestEpic } from './adminOpenSales/epics';
 
 const epic = combineEpics(
   clientSeanceRequestEpic,
@@ -13,6 +23,17 @@ const epic = combineEpics(
   clientMoviesRequestEpic,
   ticketPaymentRequestEpic,
   ticketRequestEpic,
+  adminHallsRequestEpic,
+  adminHallsRemoveEpic,
+  adminHallsAddEpic,
+  adminHallsUpdateEpic,
+  adminSeatsRequestEpic,
+  adminSeatsUpdateEpic,
+  adminMoviesRequestEpic,
+  adminMoviesSaveEpic,
+  adminSeancesRequestEpic,
+  adminSeancesSaveEpic,
+  adminOpenSaleRequestEpic,
 );
 
 export default epic;

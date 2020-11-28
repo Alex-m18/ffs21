@@ -48,7 +48,7 @@ export default function ClientHall() {
   if (seats) {
     selectedSeats = seats.filter((o) => o.selected);
     selectedSum = selectedSeats.reduce((acc, o) => (
-      acc + (o.state === 'standart' ? chosenSeance.price : chosenSeance.priceVip)
+      acc + (o.state === 'standart' ? hall.price : hall.priceVip)
     ), 0);
   }
 
@@ -113,11 +113,11 @@ export default function ClientHall() {
                 <div className="col">
                   <p className="buying-scheme__legend-price">
                     <span className="buying-scheme__chair buying-scheme__chair_standart" />
-                    Свободно (<span className="buying-scheme__legend-value">{chosenSeance.price}</span>руб)
+                    Свободно (<span className="buying-scheme__legend-value">{hall.price}</span>руб)
                   </p>
                   <p className="buying-scheme__legend-price">
                     <span className="buying-scheme__chair buying-scheme__chair_vip" />
-                    Свободно VIP (<span className="buying-scheme__legend-value">{chosenSeance.priceVip}</span>руб)
+                    Свободно VIP (<span className="buying-scheme__legend-value">{hall.priceVip}</span>руб)
                   </p>
                 </div>
                 <div className="col">

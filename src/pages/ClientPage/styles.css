@@ -5,35 +5,6 @@
   box-sizing: border-box;
 }
 
-html {
-  font-family: "Roboto", sans-serif;
-  font-size: 62.5%;
-}
-
-body {
-  background-image: url("i/background.jpg");
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: right;
-}
-
-.page-header {
-  padding: 1.4rem;
-}
-
-.page-header__title {
-  margin: 0;
-  font-weight: 900;
-  font-size: 3.4rem;
-  color: #FFFFFF;
-  text-transform: uppercase;
-  user-select: none;
-  cursor: pointer;
-}
-.page-header__title span {
-  font-weight: 100;
-}
-
 /* ~~~~~~~~~~~~ Главная ~~~~~~~~~~~~ */
 .page-nav {
   position: sticky;
@@ -54,8 +25,6 @@ body {
   border-radius: 2px;
   text-decoration: none;
   color: #000000;
-  cursor: pointer;
-  user-select: none;
 }
 .page-nav .page-nav__day + .page-nav__day {
   margin-left: 1px;
@@ -188,7 +157,6 @@ body {
   font-size: 1.4rem;
   background-color: #16A6AF;
   color: #FFFFFF;
-  cursor: pointer;
 }
 
 .buying {
@@ -288,12 +256,6 @@ body {
   background-color: #F9953A;
 }
 
-.buying-scheme__row .buying-scheme__chair_standart,
-.buying-scheme__row .buying-scheme__chair_vip {
-  cursor: pointer;
-}
-
-
 .buying-scheme__chair_selected {
   background-color: #25C4CE;
   box-shadow: 0px 0px 4px #16A6AF;
@@ -308,7 +270,6 @@ body {
   display: flex;
   flex-wrap: nowrap;
   text-align: left;
-  user-select: none;
 }
 .buying-scheme__legend .col {
   max-width: 25rem;

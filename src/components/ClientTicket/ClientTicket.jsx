@@ -16,6 +16,7 @@ export default function ClientTicket() {
   const navigate = useNavigate();
 
   const { data, loading, error } = useSelector((state) => state.ticket);
+  // const { chosenSeance } = useSelector((state) => state.client);
 
   const { ticketID } = useParams();
 
@@ -58,7 +59,7 @@ export default function ClientTicket() {
               <p className="ticket__info">На фильм: <span className="ticket__details ticket__title">{movie.title}</span></p>
               <p className="ticket__info">Места: <span className="ticket__details ticket__chairs">{seatsString}</span></p>
               <p className="ticket__info">В зале: <span className="ticket__details ticket__hall">{hall.title}</span></p>
-              <p className="ticket__info">Начало сеанса: <span className="ticket__details ticket__start">{moment(movie.date).format('DD.MM.yyyy HH:mm')}</span></p>
+              <p className="ticket__info">Начало сеанса: <span className="ticket__details ticket__start">{moment(movie.date).format('DD.MM.yyyy, HH:mm')}</span></p>
 
               { ticketID && <QRCode className="ticket__info-qr" value={window.location.href} level="M" bgColor="#FFFFFF00" /> }
 

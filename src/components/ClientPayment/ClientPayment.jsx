@@ -23,10 +23,12 @@ export default function ClientPayment() {
     return () => {};
   }, [id, navigate]);
 
+  let date;
   let movie;
   let hall;
   let seats;
   if (chosenSeance) {
+    date = chosenSeance.date;
     movie = chosenSeance.movie;
     hall = chosenSeance.hall;
     seats = chosenSeance.seats;
@@ -38,7 +40,7 @@ export default function ClientPayment() {
   if (seats) {
     selectedSum = seats
       .filter((o) => o.selected)
-      .reduce((acc, o) => acc + (o.type === 'standart' ? chosenSeance.price : chosenSeance.priceVip), 0);
+      .reduce((acc, o) => acc + (o.type === 'standart' ? hall.price : hall.priceVip), 0);
     selectedSeats = seats.filter((o) => o.selected);
     seatsString = selectedSeats.map((o) => o.number).join(', ');
   }
@@ -65,7 +67,7 @@ export default function ClientPayment() {
               <p className="ticket__info">На фильм: <span className="ticket__details ticket__title">{movie.title}</span></p>
               <p className="ticket__info">Места: <span className="ticket__details ticket__chairs">{seatsString}</span></p>
               <p className="ticket__info">В зале: <span className="ticket__details ticket__hall">{hall.title}</span></p>
-              <p className="ticket__info">Начало сеанса: <span className="ticket__details ticket__start">{moment(movie.date).format('DD.MM.yyyy HH:mm')}</span></p>
+              <p className="ticket__info">Начало сеанса: <span className="ticket__details ticket__start">{moment(date).format('DD.MM.yyyy HH:mm')}</span></p>
               <p className="ticket__info">Стоимость: <span className="ticket__details ticket__cost">{selectedSum}</span> рублей</p>
 
               { !error && loading && <Preloader /> }

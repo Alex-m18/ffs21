@@ -44,8 +44,8 @@ MovieCard.propTypes = {
     description: PropTypes.string.isRequired,
     duration: PropTypes.number.isRequired,
     origin: PropTypes.string.isRequired,
-    posterTitle: PropTypes.string.isRequired,
-    posterLink: PropTypes.string.isRequired,
+    posterTitle: PropTypes.string,
+    posterLink: PropTypes.string,
     halls: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,

@@ -1,42 +1,45 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import './styles.css';
 import React, { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 import background from './i/background.jpg';
+import AdminPanel from '../../components/AdminPanel/AdminPanel';
 
-const cssBodyText = `
+const bodyStyle = `
   background-image: url("${background}");
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
   background-size: cover;
   background-attachment: fixed;
-  background-position: right;
+  counter-reset: num;
 `;
 const pageHeaderStyle = {
-  padding: '1.4rem',
+  color: '#FFFFFF',
+  textTransform: 'uppercase',
 };
 const pageHeaderTitleStyle = {
   margin: 0,
   fontWeight: 900,
   fontSize: '3.4rem',
-  color: '#FFFFFF',
-  textTransform: 'uppercase',
 };
 const pageHeaderTitleSpanStyle = {
   fontWeight: 100,
 };
+const pageHeaderSubtitleStyle = {
+  fontSize: '1rem',
+  letterSpacing: '0.46em',
+};
 
-export default function ClientPage() {
+export default function AdminPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.body.style.cssText = cssBodyText;
-    return () => {
-      document.body.style.cssText = '';
-    };
+    document.body.style.cssText = bodyStyle;
+    return () => { document.body.style.cssText = ''; };
   }, []);
 
   return (
-    <div className="client-page">
+    <div className="admin-page">
       <header className="page-header" style={pageHeaderStyle}>
         <h1
           className="page-header__title"
@@ -48,9 +51,17 @@ export default function ClientPage() {
           <span style={pageHeaderTitleSpanStyle}>в</span>
           кино
         </h1>
+        <span className="page-header__subtitle" style={pageHeaderSubtitleStyle}>
+          Администраторррская
+        </span>
       </header>
 
-      <Outlet />
+      <main className="conf-steps">
+
+        <AdminPanel />
+
+      </main>
+
     </div>
   );
 }
