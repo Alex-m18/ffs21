@@ -18,8 +18,10 @@ exports.up = function(db) {
   return db.createTable('halls', {
     id: { type: 'string', primaryKey: true },
     title: { type: 'string', notNull: true },
-    rows: { type: 'int', notNull: true },
-    cols: { type: 'int', notNull: true },
+    rows: { type: 'int', notNull: true, defaultValue: 10 },
+    cols: { type: 'int', notNull: true, defaultValue: 8 },
+    price: { type: 'int', notNull: true, defaultValue: 250 },
+    priceVip: { type: 'int', notNull: true, defaultValue: 300 },
   });
 };
 

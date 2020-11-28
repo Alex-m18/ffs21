@@ -4,20 +4,22 @@ class Model {
     this.table = '';
   }
 
-  async all(properties = [], property = null, operator = null, value = null) {
+  async all(properties = [], property = null, operator = null, value = null, orderBy = null) {
     let valueStr = '';
     let whereStr = '';
+    let orderByStr = '';
     if (property && operator && value) {
       valueStr = Array.isArray(value) ? `(${value.map((o) => `"${o}"`).join(', ')})` : `"${value}"`;
       whereStr = `WHERE ${property} ${operator} ${valueStr}`;
     }
+    if (orderBy) orderByStr = `ORDER BY ${orderBy}`;
 
     let propStr = '*';
     if (properties.length) propStr = properties.join(', ');
 
     return await new Promise((resolve, reject) => {
       this.db.all(
-        `SELECT ${propStr} FROM ${this.table} ${whereStr}`,
+        `SELECT ${propStr} FROM ${this.table} ${whereStr} ${orderByStr}`,
         [],
         function(err, rows) {
           if (err) reject(err);
@@ -92,7 +94,8 @@ class Model {
           const sets = keys.map((key) => `'${key}' = '${o[key]}'`).join(', ');
           const promise = new Promise((resolve, reject) => {
             this.db.exec(
-              `UPDATE '${this.table}' SET ${sets} WHERE ${key} = '${o[key]}'`,
+              `PRAGMA foreign_keys = ON;
+              UPDATE '${this.table}' SET ${sets} WHERE ${key} = '${o[key]}'`,
               function(err) {
                 if (err) reject(err);
                 resolve(0);
@@ -104,6 +107,35 @@ class Model {
         
         Promise.all(promises)
           .then(() => resolve(0))
+          .catch((err) => reject(err));
+      });
+    });
+  }
+
+  async delete(objects = [], key = 'id') {
+    if (!objects || !objects.length) return 0;
+    return new Promise((resolve, reject) => {
+      this.db.serialize(() => {
+        const keys = [...Object.keys(objects[0])].filter((k) => k !== key);
+        const promises = [];
+        
+        objects.forEach((o) => {
+          const sets = keys.map((key) => `'${key}' = '${o[key]}'`).join(', ');
+          const promise = new Promise((resolve, reject) => {
+            this.db.exec(
+              `PRAGMA foreign_keys = ON;
+              DELETE FROM '${this.table}' WHERE ${key} = '${o[key]}';`,
+              function(err) {
+                if (err) reject(err);
+                resolve(0);
+              }
+            );
+          });
+          promises.push(promise);
+        });
+        
+        Promise.all(promises)
+          .then(() => resolve(objects.map((o) => ({ ...o, success: true }))))
           .catch((err) => reject(err));
       });
     });

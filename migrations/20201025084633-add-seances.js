@@ -15,36 +15,18 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.createTable('seances', {
-    id: { type: 'string', primaryKey: true },
-    date: { type: 'datetime', notNull: true },
-    state: { type: 'string', notNull: true },
-    movieID: {
-      type: 'string',
-      notNull: true,
-      foreignKey: {
-        name: 'seance_movie_id_fk',
-        table: 'movies',
-        rules: {
-          onDelete: 'CASCADE',
-          onUpdate: 'RESTRICT',
-        },
-        mapping: 'id',
-      },
-    },
-    hallID: {
-      type: 'string',
-      notNull: true,
-      foreignKey: {
-        name: 'seance_hall_id_fk',
-        table: 'halls',
-        rules: {
-          onDelete: 'CASCADE',
-          onUpdate: 'RESTRICT',
-        },
-        mapping: 'id',
-      },
-    },
+  return new Promise((resolve) => {
+    db.runSql(`
+      CREATE TABLE "seances" (
+        "id" VARCHAR  PRIMARY KEY,
+        "date" datetime  NOT NULL,
+        "state" VARCHAR  NOT NULL,
+        "movieID" VARCHAR  NOT NULL,
+        "hallID" VARCHAR  NOT NULL,
+        FOREIGN KEY (movieID) REFERENCES movies(id)  ON DELETE CASCADE  ON UPDATE RESTRICT,
+        FOREIGN KEY (hallID) REFERENCES halls(id)  ON DELETE CASCADE  ON UPDATE RESTRICT
+      );
+    `, () => resolve());
   });
 };
 
@@ -53,5 +35,5 @@ exports.down = function(db) {
 };
 
 exports._meta = {
-  "version": 1
+  "version": 1,
 };

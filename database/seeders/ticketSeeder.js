@@ -17,13 +17,13 @@ exports.run = async (db) => {
   const tickets = new Tickets(db);
 
   const data = [];
-  seances.forEach(() => {
+  for (let i = 0; i < seances.length * 5; i += 1) {
     data.push({
       id: uuid(),
       date: moment().toISOString(),
       price: randomNumber(2, 20) * 50,
     });
-  });
+  };
 
   const ids = await tickets.push(data);
   

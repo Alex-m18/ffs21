@@ -17,23 +17,19 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return new Promise((resolve) => {
     db.runSql(`
-      CREATE TABLE "seats_seances" (
-        "id" VARCHAR  PRIMARY KEY,
-        "state" VARCHAR  NOT NULL,
-        "seatID" VARCHAR  NOT NULL,
-        "seanceID" VARCHAR  NOT NULL,
-        "ticketID" VARCHAR,
-        FOREIGN KEY (seanceID) REFERENCES seances(id)  ON DELETE CASCADE  ON UPDATE RESTRICT,
-        FOREIGN KEY (ticketID) REFERENCES tickets(id)  ON DELETE SET NULL  ON UPDATE RESTRICT
+      CREATE TABLE tokens (
+        token VARCHAR  PRIMARY KEY UNIQUE,
+        userID VARCHAR  NOT NULL,
+        FOREIGN KEY (userID) REFERENCES users(id)  ON DELETE CASCADE  ON UPDATE RESTRICT
       );
     `, () => resolve());
   });
 };
 
 exports.down = function(db) {
-  return db.dropTable('seats_seances', true);
+  return db.dropTable('tokens', true);
 };
 
 exports._meta = {
-  "version": 1,
+  "version": 1
 };

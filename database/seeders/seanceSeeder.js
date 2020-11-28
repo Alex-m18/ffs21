@@ -21,7 +21,7 @@ exports.run = async (db) => {
       const date = moment()
         .add(1, 'hour')
         .startOf('hour')
-        .add(randomNumber(4, 200) * 10, 'minute')
+        .add(randomNumber(1, 24) * 135, 'minute')
         .toISOString();
       data.push({
         id: uuid(),

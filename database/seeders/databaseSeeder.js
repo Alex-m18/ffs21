@@ -1,19 +1,19 @@
 require('dotenv').config();
 const sqlite3 = require('sqlite3').verbose();
 
+const userSeeder = require('./userSeeder');
 const movieSeeder = require('./movieSeeder');
 const hallSeeder = require('./hallSeeder');
 const seanceSeeder = require('./seanceSeeder');
-const priceSeeder = require('./priceSeeder');
 const seatSeeder = require('./seatSeeder');
 const seatSeanceSeeder = require('./seatSeanceSeeder');
 const ticketSeeder = require('./ticketSeeder');
 
 const seeds = [
+  userSeeder,
   movieSeeder,
   hallSeeder,
   seanceSeeder,
-  priceSeeder,
   seatSeeder,
   seatSeanceSeeder,
   ticketSeeder,

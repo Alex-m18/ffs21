@@ -15,25 +15,18 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.createTable('seats', {
-    id: { type: 'int', primaryKey: true },
-    number: { type: 'int', notNull: true },
-    row: { type: 'int', notNull: true },
-    column: { type: 'int', notNull: true },
-    type: { type: 'string', notNull: true },
-    hallID: {
-      type: 'string',
-      notNull: true,
-      foreignKey: {
-        name: 'seat_hall_id_fk',
-        table: 'halls',
-        rules: {
-          onDelete: 'CASCADE',
-          onUpdate: 'RESTRICT',
-        },
-        mapping: 'id',
-      },
-    },
+  return new Promise((resolve) => {
+    db.runSql(`
+      CREATE TABLE "seats" (
+        "id" INTEGER  PRIMARY KEY,
+        "number" INTEGER  NOT NULL,
+        "row" INTEGER  NOT NULL,
+        "column" INTEGER  NOT NULL,
+        "type" VARCHAR  NOT NULL,
+        "hallID" VARCHAR  NOT NULL,
+        FOREIGN KEY (hallID) REFERENCES halls(id)  ON DELETE CASCADE  ON UPDATE RESTRICT
+      );
+    `, () => resolve());
   });
 };
 
@@ -42,5 +35,5 @@ exports.down = function(db) {
 };
 
 exports._meta = {
-  "version": 1
+  "version": 1,
 };

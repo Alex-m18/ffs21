@@ -14,11 +14,16 @@ exports.run = async (db) => {
   for (let i = 1; i <= 3; i += 1) {
     const rows = randomNumber(8, 15);
     const cols = randomNumber(Math.floor(rows * 2 / 3), Math.floor(rows / 2 * 3));
+    const price = randomNumber(3, 10) * 50;
+    const priceVip = price + randomNumber(1, 5) * 50;
+
     data.push({
       id: uuid(),
       title: `Зал ${i}`,
       rows,
       cols,
+      price,
+      priceVip,
     });
   }
 
