@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 export default function MovieCard({ movie }) {
   return (
@@ -19,20 +20,30 @@ export default function MovieCard({ movie }) {
         </div>
       </div>
 
-      {movie.halls.filter((hall) => hall.seances.length).map((hall) => (
-        <div className="movie-seances__hall" key={hall.id}>
-          <h3 className="movie-seances__hall-title">{hall.title}</h3>
-          <ul className="movie-seances__list">
-            {hall.seances.map((seance) => (
-              <li className="movie-seances__time-block" key={seance.id}>
-                <Link to={`/hall/${seance.id}`} className="movie-seances__time">
-                  {seance.time}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {movie.halls
+        .filter((hall) => hall.seances.length)
+        .sort((a, b) => {
+          if (a.title > b.title) return 1;
+          return -1;
+        })
+        .map((hall) => (
+          <div className="movie-seances__hall" key={hall.id}>
+            <h3 className="movie-seances__hall-title">{hall.title}</h3>
+            <ul className="movie-seances__list">
+              {hall.seances
+                .sort((a, b) => {
+                  if (moment(a.date).isAfter(moment(b.date))) return 1;
+                  return -1;
+                }).map((seance) => (
+                  <li className="movie-seances__time-block" key={seance.id}>
+                    <Link to={`/hall/${seance.id}`} className="movie-seances__time">
+                      {seance.time}
+                    </Link>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
     </section>
   );
 }

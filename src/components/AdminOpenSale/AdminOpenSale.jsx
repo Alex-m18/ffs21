@@ -18,6 +18,7 @@ function AdminOpenSale(props) {
   useEffect(() => {
     if (success) setTimer(setTimeout(() => onSuccessClear(), 1000));
     return () => clearTimeout(timer);
+  // eslint-disable-next-line
   }, [success]);
 
   return (

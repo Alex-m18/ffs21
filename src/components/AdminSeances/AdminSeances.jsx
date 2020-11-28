@@ -67,11 +67,13 @@ function AdminSeances(props) {
     getSeances();
     loadingMoviesSuccessClear();
     return () => {};
+  // eslint-disable-next-line
   }, [movies]);
 
   useEffect(() => {
     refreshHandler();
     return () => {};
+  // eslint-disable-next-line
   }, []);
 
   const onSaveHandler = () => {
@@ -82,11 +84,13 @@ function AdminSeances(props) {
     saveSeances(seances.data.filter((o) => !o.id || o.removed));
     setTimeout(() => saveMoviesSuccessClear(), 1000);
     return () => {};
+  // eslint-disable-next-line
   }, [movies]);
   useEffect(() => {
     if (!seances.savingSuccess) return () => {};
     setTimeout(() => saveSeancesSuccessClear(), 1000);
     return () => {};
+  // eslint-disable-next-line
   }, [seances]);
 
   const onChangeHandler = (callback) => (name, value) => callback({ [`${name}`]: value });
@@ -144,6 +148,7 @@ function AdminSeances(props) {
       }, 1);
     setTimeline(tl);
     return () => {};
+  // eslint-disable-next-line
   }, [seances]);
 
   const [colors, setColors] = useState({});
