@@ -54,9 +54,9 @@ const mapStateToProps = (state) => ({
   ...state.openSale,
 });
 
-const mapDispatchToProps = (dispacth) => ({
-  onOpenSale: () => dispacth(adminOpenSaleRequest()),
-  onSuccessClear: () => dispacth(adminOpenSaleSuccessClear()),
+const mapDispatchToProps = (dispatch) => ({
+  onOpenSale: () => dispatch(adminOpenSaleRequest()),
+  onSuccessClear: () => dispatch(adminOpenSaleSuccessClear()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminOpenSale);

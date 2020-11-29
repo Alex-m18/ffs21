@@ -15,6 +15,7 @@ import { adminSeatsRequestEpic, adminSeatsUpdateEpic } from './adminSeats/epics'
 import { adminMoviesSaveEpic, adminMoviesRequestEpic } from './adminMovies/epics';
 import { adminSeancesRequestEpic, adminSeancesSaveEpic } from './adminSeances/epics';
 import { adminOpenSaleRequestEpic } from './adminOpenSales/epics';
+import { userLoginRequestEpic } from './user/epics';
 
 const epic = combineEpics(
   clientSeanceRequestEpic,
@@ -34,6 +35,7 @@ const epic = combineEpics(
   adminSeancesRequestEpic,
   adminSeancesSaveEpic,
   adminOpenSaleRequestEpic,
+  userLoginRequestEpic,
 );
 
 export default epic;

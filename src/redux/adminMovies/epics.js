@@ -8,6 +8,7 @@ import {
   exhaustMap,
   retry,
   catchError,
+  withLatestFrom,
 } from 'rxjs/operators';
 
 import {
@@ -20,35 +21,50 @@ import {
   adminMoviesSaveSuccess,
   adminMoviesSaveFailure,
 } from './actions';
+import { userLogout } from '../user/actions';
 
-export const adminMoviesRequestEpic = (action$) => action$.pipe(
+export const adminMoviesRequestEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_MOVIES_REQUEST),
-  exhaustMap(() => (
-    ajax.getJSON(
-      `${process.env.REACT_APP_BACKEND_URL}/movies`,
-    ).pipe(
+  withLatestFrom(state$),
+  exhaustMap(([, state]) => (
+    ajax({
+      url: `${process.env.REACT_APP_BACKEND_URL}/movies`,
+      method: 'GET',
+      headers: {
+        Authorization: state.user.data.token,
+        'Content-Type': 'Application/JSON',
+      },
+    }).pipe(
       retry(5),
-      map((res) => adminMoviesSuccess(res)),
-      catchError((e) => of(adminMoviesFailure(e))),
+      map((res) => adminMoviesSuccess(res.response)),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminMoviesFailure(err));
+      }),
     )
   )),
 );
 
-export const adminMoviesSaveEpic = (action$) => action$.pipe(
+export const adminMoviesSaveEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_MOVIES_SAVE_REQUEST),
-  exhaustMap((o) => {
+  withLatestFrom(state$),
+  exhaustMap(([o, state]) => {
     const data = o.payload;
     return ajax({
       url: `${process.env.REACT_APP_BACKEND_URL}/movies`,
       method: 'POST',
       headers: {
+        Authorization: state.user.data.token,
         'Content-Type': 'Application/JSON',
       },
       body: JSON.stringify(data),
     }).pipe(
       retry(5),
       map((res) => adminMoviesSaveSuccess(res.response)),
-      catchError((err) => of(adminMoviesSaveFailure(err))),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminMoviesSaveFailure(err));
+      }),
     );
   }),
 );

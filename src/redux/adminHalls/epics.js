@@ -8,6 +8,7 @@ import {
   exhaustMap,
   retry,
   catchError,
+  withLatestFrom,
 } from 'rxjs/operators';
 
 import {
@@ -27,73 +28,97 @@ import {
   adminHallsUpdateFailure,
   adminHallsUpdateSuccess,
 } from './actions';
+import { userLogout } from '../user/actions';
 
-export const adminHallsRequestEpic = (action$) => action$.pipe(
+export const adminHallsRequestEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_HALLS_REQUEST),
-  exhaustMap(() => (
-    ajax.getJSON(
-      `${process.env.REACT_APP_BACKEND_URL}/halls`,
-    ).pipe(
+  withLatestFrom(state$),
+  exhaustMap(([, state]) => (
+    ajax({
+      url: `${process.env.REACT_APP_BACKEND_URL}/halls`,
+      method: 'GET',
+      headers: {
+        Authorization: state.user.data.token,
+        'Content-Type': 'Application/JSON',
+      },
+    }).pipe(
       retry(5),
-      map((res) => adminHallsSuccess(res)),
-      catchError((e) => of(adminHallsFailure(e))),
+      map((res) => adminHallsSuccess(res.response)),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminHallsFailure(err));
+      }),
     )
   )),
 );
 
-export const adminHallsRemoveEpic = (action$) => action$.pipe(
+export const adminHallsRemoveEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_HALLS_REMOVE_REQUEST),
-  exhaustMap((o) => {
+  withLatestFrom(state$),
+  exhaustMap(([o, state]) => {
     const id = o.payload;
     return ajax({
       url: `${process.env.REACT_APP_BACKEND_URL}/halls/${id}`,
       method: 'DELETE',
       headers: {
+        Authorization: state.user.data.token,
         'Content-Type': 'Application/JSON',
       },
-      // body: JSON.stringify(id),
     }).pipe(
       retry(5),
       map(() => adminHallsRemoveSuccess(id)),
-      catchError((e) => of(adminHallsRemoveFailure(e, id))),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminHallsRemoveFailure(err, id));
+      }),
     );
   }),
 );
 
-export const adminHallsAddEpic = (action$) => action$.pipe(
+export const adminHallsAddEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_HALLS_ADD_REQUEST),
-  exhaustMap((o) => {
+  withLatestFrom(state$),
+  exhaustMap(([o, state]) => {
     const data = o.payload;
     return ajax({
       url: `${process.env.REACT_APP_BACKEND_URL}/halls`,
       method: 'POST',
       headers: {
+        Authorization: state.user.data.token,
         'Content-Type': 'Application/JSON',
       },
       body: JSON.stringify(data),
     }).pipe(
       retry(5),
       map((res) => adminHallsAddSuccess(res.response)),
-      catchError((err) => of(adminHallsAddFailure(err))),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminHallsAddFailure(err));
+      }),
     );
   }),
 );
 
-export const adminHallsUpdateEpic = (action$) => action$.pipe(
+export const adminHallsUpdateEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_HALLS_UPDATE_REQUEST),
-  exhaustMap((o) => {
+  withLatestFrom(state$),
+  exhaustMap(([o, state]) => {
     const data = o.payload;
     return ajax({
       url: `${process.env.REACT_APP_BACKEND_URL}/hall`,
       method: 'PUT',
       headers: {
+        Authorization: state.user.data.token,
         'Content-Type': 'Application/JSON',
       },
       body: JSON.stringify(data),
     }).pipe(
       retry(5),
       map((res) => adminHallsUpdateSuccess(res.response)),
-      catchError((err) => of(adminHallsUpdateFailure(err))),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminHallsUpdateFailure(err));
+      }),
     );
   }),
 );

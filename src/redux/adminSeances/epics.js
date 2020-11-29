@@ -8,6 +8,7 @@ import {
   exhaustMap,
   retry,
   catchError,
+  withLatestFrom,
 } from 'rxjs/operators';
 
 import {
@@ -20,35 +21,50 @@ import {
   adminSeancesSaveSuccess,
   adminSeancesSaveFailure,
 } from './actions';
+import { userLogout } from '../user/actions';
 
-export const adminSeancesRequestEpic = (action$) => action$.pipe(
+export const adminSeancesRequestEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_SEANCES_REQUEST),
-  exhaustMap(() => (
-    ajax.getJSON(
-      `${process.env.REACT_APP_BACKEND_URL}/seances`,
-    ).pipe(
+  withLatestFrom(state$),
+  exhaustMap(([, state]) => (
+    ajax({
+      url: `${process.env.REACT_APP_BACKEND_URL}/seances`,
+      method: 'GET',
+      headers: {
+        Authorization: state.user.data.token,
+        'Content-Type': 'Application/JSON',
+      },
+    }).pipe(
       retry(5),
-      map((res) => adminSeancesSuccess(res)),
-      catchError((e) => of(adminSeancesFailure(e))),
+      map((res) => adminSeancesSuccess(res.response)),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminSeancesFailure(err));
+      }),
     )
   )),
 );
 
-export const adminSeancesSaveEpic = (action$) => action$.pipe(
+export const adminSeancesSaveEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_SEANCES_SAVE_REQUEST),
-  exhaustMap((o) => {
+  withLatestFrom(state$),
+  exhaustMap(([o, state]) => {
     const data = o.payload;
     return ajax({
       url: `${process.env.REACT_APP_BACKEND_URL}/seances`,
       method: 'POST',
       headers: {
+        Authorization: state.user.data.token,
         'Content-Type': 'Application/JSON',
       },
       body: JSON.stringify(data),
     }).pipe(
       retry(5),
       map((res) => adminSeancesSaveSuccess(res.response)),
-      catchError((err) => of(adminSeancesSaveFailure(err))),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminSeancesSaveFailure(err));
+      }),
     );
   }),
 );

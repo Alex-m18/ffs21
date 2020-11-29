@@ -8,6 +8,7 @@ import {
   exhaustMap,
   retry,
   catchError,
+  withLatestFrom,
 } from 'rxjs/operators';
 
 import {
@@ -20,35 +21,50 @@ import {
   adminSeatsUpdateSuccess,
   adminSeatsUpdateFailure,
 } from './actions';
+import { userLogout } from '../user/actions';
 
-export const adminSeatsRequestEpic = (action$) => action$.pipe(
+export const adminSeatsRequestEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_SEATS_REQUEST),
-  exhaustMap((o) => (
-    ajax.getJSON(
-      `${process.env.REACT_APP_BACKEND_URL}/seats/${o.payload}`,
-    ).pipe(
+  withLatestFrom(state$),
+  exhaustMap(([o, state]) => (
+    ajax({
+      url: `${process.env.REACT_APP_BACKEND_URL}/seats/${o.payload}`,
+      method: 'GET',
+      headers: {
+        Authorization: state.user.data.token,
+        'Content-Type': 'Application/JSON',
+      },
+    }).pipe(
       retry(5),
-      map((res) => adminSeatsSuccess(res)),
-      catchError((e) => of(adminSeatsFailure(e))),
+      map((res) => adminSeatsSuccess(res.response)),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminSeatsFailure(err));
+      }),
     )
   )),
 );
 
-export const adminSeatsUpdateEpic = (action$) => action$.pipe(
+export const adminSeatsUpdateEpic = (action$, state$) => action$.pipe(
   ofType(ADMIN_SEATS_UPDATE_REQUEST),
-  exhaustMap((o) => {
+  withLatestFrom(state$),
+  exhaustMap(([o, state]) => {
     const data = o.payload;
     return ajax({
       url: `${process.env.REACT_APP_BACKEND_URL}/seats`,
       method: 'PUT',
       headers: {
+        Authorization: state.user.data.token,
         'Content-Type': 'Application/JSON',
       },
       body: JSON.stringify(data),
     }).pipe(
       retry(5),
       map((res) => adminSeatsUpdateSuccess(res.response)),
-      catchError((err) => of(adminSeatsUpdateFailure(err))),
+      catchError((err) => {
+        if (err.status === 401) return of(userLogout());
+        return of(adminSeatsUpdateFailure(err));
+      }),
     );
   }),
 );

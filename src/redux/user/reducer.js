@@ -4,10 +4,11 @@ import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_FAILURE,
   USER_LOGIN_SUCCESS,
+  USER_LOGOUT,
 } from './types';
 
 const initialState = {
-  user: null,
+  data: null,
   loading: false,
   error: null,
 };
@@ -25,14 +26,16 @@ export default function userReducer(state = initialState, action) {
       return { ...state, loading: false, error };
     }
     case USER_LOGIN_SUCCESS: {
-      const user = action.payload;
+      const data = action.payload;
       return {
         ...state,
-        user,
+        data,
         loading: false,
         error: null,
       };
     }
+    case USER_LOGOUT:
+      return initialState;
     default:
       return state;
   }

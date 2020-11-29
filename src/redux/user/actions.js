@@ -3,10 +3,11 @@ import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_FAILURE,
   USER_LOGIN_SUCCESS,
+  USER_LOGOUT,
 } from './types';
 
-export function userLoginRequest(seanceID) {
-  return { type: USER_LOGIN_REQUEST, payload: seanceID };
+export function userLoginRequest(data) {
+  return { type: USER_LOGIN_REQUEST, payload: data };
 }
 
 export function userLoginFailure(value = true) {
@@ -15,4 +16,8 @@ export function userLoginFailure(value = true) {
 
 export function userLoginSuccess(value = true) {
   return { type: USER_LOGIN_SUCCESS, payload: value };
+}
+
+export function userLogout() {
+  return { type: USER_LOGOUT };
 }

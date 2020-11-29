@@ -51,17 +51,20 @@ const AddForm = (props) => {
                     <p className="conf-step__paragraph">{field.title}</p>
                   )}
 
-                  { (field.type === 'text') && (
+                  { (['text', 'number'].includes(field.type)) && (
                     <label className="conf-step__label conf-step__label-fullsize" htmlFor={field.name} key={field.name}>
                       {field.title}
                       <input
                         className="conf-step__input"
-                        type="text"
+                        type={field.type}
                         placeholder={field.placeholder || ''}
                         name={field.name}
                         onChange={onChangeHandler}
                         value={field.value}
                         required={field.required}
+                        max={field.max}
+                        min={field.min}
+                        step={field.step}
                       />
                     </label>
                   )}
@@ -103,11 +106,17 @@ AddForm.propTypes = {
     type: PropTypes.string.required,
     options: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
+      title: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+      ]).isRequired,
     })),
     name: PropTypes.string,
     title: PropTypes.string.isRequired,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]).isRequired,
     placeholder: PropTypes.string,
     required: PropTypes.bool,
   })),

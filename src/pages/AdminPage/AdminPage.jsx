@@ -2,8 +2,12 @@
 import './styles.css';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import background from './i/background.jpg';
 import AdminPanel from '../../components/AdminPanel/AdminPanel';
+import LoginForm from '../../components/LoginForm/LoginForm';
+import { userLoginRequest } from '../../redux/user/actions';
 
 const bodyStyle = `
   background-image: url("${background}");
@@ -30,13 +34,24 @@ const pageHeaderSubtitleStyle = {
   letterSpacing: '0.46em',
 };
 
-export default function AdminPage() {
+function AdminPage(props) {
+  const {
+    user,
+    loading,
+    error,
+    onLogin,
+  } = props;
+
   const navigate = useNavigate();
 
   useEffect(() => {
     document.body.style.cssText = bodyStyle;
     return () => { document.body.style.cssText = ''; };
   }, []);
+
+  const onLoginHandler = (data) => {
+    onLogin(data);
+  };
 
   return (
     <div className="admin-page">
@@ -58,10 +73,36 @@ export default function AdminPage() {
 
       <main className="conf-steps">
 
-        <AdminPanel />
+        { !user && <LoginForm onSubmit={onLoginHandler} loading={loading} error={error} /> }
+
+        { user && <AdminPanel /> }
 
       </main>
 
     </div>
   );
 }
+
+AdminPage.propTypes = {
+  user: PropTypes.shape({}),
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.shape({}),
+  onLogin: PropTypes.func.isRequired,
+};
+
+AdminPage.defaultProps = {
+  user: null,
+  error: null,
+};
+
+const mapStateToProps = (state) => ({
+  user: state.user.data,
+  loading: state.user.loading,
+  error: state.user.error,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onLogin: (data) => dispatch(userLoginRequest(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AdminPage);

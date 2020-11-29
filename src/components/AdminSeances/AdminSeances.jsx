@@ -280,11 +280,13 @@ function AdminSeances(props) {
             },
             {
               title: 'Длительность в минутах',
-              type: 'text',
+              type: 'number',
               name: 'duration',
               value: movies.addForm.data.duration,
               placeholder: '90',
               required: true,
+              min: 1,
+              step: 1,
             },
           ]}
           submitTitle="Добавить фильм"
@@ -353,7 +355,10 @@ AdminSeances.propTypes = {
       id: PropTypes.string,
       title: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
-      duration: PropTypes.number.isRequired,
+      duration: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+      ]).isRequired,
       origin: PropTypes.string.isRequired,
       posterTitle: PropTypes.string,
       posterLink: PropTypes.string,
@@ -363,7 +368,10 @@ AdminSeances.propTypes = {
       data: PropTypes.shape({
         title: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
-        duration: PropTypes.number.isRequired,
+        duration: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number,
+        ]).isRequired,
         origin: PropTypes.string.isRequired,
       }).isRequired,
     }).isRequired,
