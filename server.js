@@ -70,7 +70,7 @@ router.post('/api/login', async (ctx, next) => {
   return fortune(ctx, { ...userMapper(user), token });
 });
 
-router.use('/', async (ctx, next) => {
+const auth = async (ctx, next) => {
   try {
     const tokenString = ctx.headers.authorization;
     const reqUser = await users.verifyToken(tokenString);
@@ -81,9 +81,9 @@ router.use('/', async (ctx, next) => {
   } catch {
     ctx.response.status = 401;
   }
-});
+};
 
-router.get('/api/opensales', async (ctx, next) => {
+router.get('/api/opensales', auth, async (ctx, next) => {
   const result = await seances.all([], 'state', Model.EQUAL, 'closed')
     .then((closed) => seances.update(closed.map((o) => ({ ...o, state: 'open' }))))
     .then(() => ({ success: true }));
@@ -91,7 +91,7 @@ router.get('/api/opensales', async (ctx, next) => {
   return fortune(ctx, result);
 });
 
-router.get('/api/seats/:id', async (ctx, next) => {
+router.get('/api/seats/:id', auth, async (ctx, next) => {
   const { id } = ctx.params;
   const hall = await halls.findByID(id);
   if (!hall) return;
@@ -101,7 +101,7 @@ router.get('/api/seats/:id', async (ctx, next) => {
   return fortune(ctx, hallSeats);
 });
 
-router.put('/api/seats', async (ctx, next) => {
+router.put('/api/seats', auth, async (ctx, next) => {
   if (!ctx.request.body) return;
   const newSeatsRaw = ctx.request.body;
   if (!newSeatsRaw || !Array.isArray(newSeatsRaw) || !newSeatsRaw.length) return;
@@ -135,11 +135,11 @@ router.put('/api/seats', async (ctx, next) => {
   return fortune(ctx, { success });
 });
 
-router.get('/api/seances', async (ctx, next) => {
+router.get('/api/seances', auth, async (ctx, next) => {
   return fortune(ctx, await seances.all([], 'date', Model.BIGGER, moment().toISOString(), 'date'));
 });
 
-router.post('/api/seances', async (ctx, next) => {
+router.post('/api/seances', auth, async (ctx, next) => {
   const { body } = ctx.request;
   if (!body) return;
 
@@ -192,11 +192,11 @@ router.post('/api/seances', async (ctx, next) => {
   return fortune(ctx, result);
 });
 
-router.get('/api/movies', async (ctx, next) => {
+router.get('/api/movies', auth, async (ctx, next) => {
   return fortune(ctx, await movies.all());
 });
 
-router.post('/api/movies', async (ctx, next) => {
+router.post('/api/movies', auth, async (ctx, next) => {
   const { body } = ctx.request;
   if (!body) return;
 
@@ -223,17 +223,17 @@ router.post('/api/movies', async (ctx, next) => {
   return fortune(ctx, result);
 });
 
-router.get('/api/halls', async (ctx, next) => {
+router.get('/api/halls', auth, async (ctx, next) => {
   return fortune(ctx, await halls.all());
 });
 
-router.delete('/api/halls/:id', async (ctx, next) => {
+router.delete('/api/halls/:id', auth, async (ctx, next) => {
   const { id } = ctx.params;
   ctx.status = 204;
   return fortune(ctx, await halls.delete([{ id }]));
 });
 
-router.put('/api/hall', async (ctx, next) => {
+router.put('/api/hall', auth, async (ctx, next) => {
   if (!ctx.request.body) return;
   const {
     id,
@@ -254,7 +254,7 @@ router.put('/api/hall', async (ctx, next) => {
   return fortune(ctx, { success: true, hall });
 });
 
-router.post('/api/halls', async (ctx, next) => {
+router.post('/api/halls', auth, async (ctx, next) => {
   if (!ctx.request.body) return;
   const { title } = ctx.request.body;
   if (!title) return;
