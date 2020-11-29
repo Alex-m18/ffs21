@@ -48,18 +48,14 @@ class Users extends Model {
     if (!user) return;
     const pk = createPrivateKey(Buffer.from(pasetoKey));
     const signed = await paseto.V2.sign({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-      }, pk, { expiresIn: '24 hours' });
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    }, pk, { expiresIn: '18 hours' });
     return signed;
   }
 
-  async verifyToken(id, token) {
-    if (!id) return;
-    const user = await this.findByID(id);
-    if (!user) return;
-
+  async verifyToken(token) {
     const pk = createPrivateKey(Buffer.from(pasetoKey));
     return paseto.V2.verify(token, pk);
   }

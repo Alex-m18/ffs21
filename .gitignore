@@ -25,3 +25,5 @@ yarn-error.log*
 /.vscode
 /database/*.sqlite
 yarn.lock
+
+*.key

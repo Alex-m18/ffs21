@@ -6,6 +6,7 @@ async function generateKey() {
   const exported = key.export({ format: 'pem', type: 'pkcs8' }).toString('hex');
   console.log(exported);
   fs.writeFileSync('./paseto_private.key', exported);
+  console.log('[INFO] Private key generated');
 }
 
 generateKey();

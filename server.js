@@ -37,33 +37,13 @@ const seances = new Seances(db);
 const seatStates = new SeatStates(db);
 const tickets = new Tickets(db);
 
-// const passport = require('koa-passport');
-// const LocalStrategy = require('passport-local').Strategy;
-
-// passport.use(new LocalStrategy(
-//   async function(email, password, done) {
-//     const user = await users.find([], 'email', Model.EQUAL, email);
-//     if (!user) return done(null, false, { message: 'Incorrect email' });
-
-//     if (!(await users.verifyPassword({ ...user, password }))) {
-//       return done(null, false, { message: 'Incorrect password' });
-//     }
-    
-//     return done(null, user);
-//   }
-// ));
-
 const userMapper = user => ({
   id: user.id,
   username: user.username,
   email: user.email,
 });
 
-const randomNumber = require('./app/randomNumber');
 const fortune = require('./app/fortune');
-const { resolve } = require('path');
-const { rejects } = require('assert');
-const { array } = require('joi');
 
 const app = new Koa();
 app.use(logger());
@@ -72,24 +52,35 @@ app.use(koaBody({
   json: true,
 }));
 
-// app.use(passport.initialize());
-
-// app.use((ctx, next) => {
-//   return next();
-// });
-
 const router = new Router();
 
-router.post('/login', async (ctx, next) => {
+router.post('/api/login', async (ctx, next) => {
   const { email, password } = ctx.request.body;
   if (!email || !password) return false;
+
   const user = await users.find([], 'email', Model.EQUAL, email);
   if (!user) return false;
+
   const pwdCorrect = await users.verifyPassword({ ...user, password });
   if (!pwdCorrect) return false;
+
   const token = await users.getToken(user);
   tokens.push([{ token, userID: user.id }]);
+
   return fortune(ctx, { ...userMapper(user), token });
+});
+
+router.use('/', async (ctx, next) => {
+  try {
+    const tokenString = ctx.headers.authorization;
+    const reqUser = await users.verifyToken(tokenString);
+    if (!reqUser) throw {};
+    const user = await users.findByID(reqUser.id);
+    if (user.role !== 'admin') throw {};
+    return next();
+  } catch {
+    ctx.response.status = 401;
+  }
 });
 
 router.get('/api/opensales', async (ctx, next) => {
@@ -452,6 +443,3 @@ const server = http.createServer(app.callback());
 server.listen(port);
 
 console.log(`Server is listening on port ${port}`);
-
-// const test = require('./test');
-// test(db);
