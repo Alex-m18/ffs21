@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Preloader from '../Preloader/Preloader';
 import DaysNavigator from '../DaysNavigator/DaysNavigator';
 import MovieCard from '../MovieCard/MovieCard';
@@ -10,8 +11,8 @@ import { clientSeancesClear, clientSeancesRequest } from '../../redux/clientSean
 import { clientHallsClear, clientHallsRequest } from '../../redux/clientHalls/actions';
 import { clientMoviesClear, clientMoviesRequest } from '../../redux/clientMovies/actions';
 
-export default function MoviesList() {
-  const navigate = useNavigate();
+export default function MoviesList({ basename }) {
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const { chosenDate } = useSelector((state) => state.client);
@@ -70,7 +71,7 @@ export default function MoviesList() {
 
   const handleSeanceClick = (id) => {
     dispatch(changeClientState({ chosenSeance: { id } }));
-    navigate('/hall');
+    history.push('/hall');
   };
 
   return (
@@ -83,10 +84,23 @@ export default function MoviesList() {
           combinedMovies && combinedMovies
             .filter((movie) => movie.halls.filter((hall) => hall.seances.length).length)
             .map((movie) => (
-              <MovieCard movie={movie} onSeanceClick={handleSeanceClick} key={movie.id} />
+              <MovieCard
+                movie={movie}
+                onSeanceClick={handleSeanceClick}
+                key={movie.id}
+                basename={basename}
+              />
             ))
         }
       </main>
     </>
   );
 }
+
+MoviesList.propTypes = {
+  basename: PropTypes.string,
+};
+
+MoviesList.defaultProps = {
+  basename: '',
+};

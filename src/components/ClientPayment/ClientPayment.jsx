@@ -3,14 +3,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import ClientHeader from '../ClientHeader/ClientHeader';
 import { ticketPaymentClear, ticketPaymentRequest } from '../../redux/payment/actions';
 import Preloader from '../Preloader/Preloader';
 import AcceptinButton from '../AcceptinButton/AcceptinButton';
 
 export default function ClientPayment() {
-  const navigate = useNavigate();
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const { chosenSeance } = useSelector((state) => state.client);
@@ -19,9 +19,9 @@ export default function ClientPayment() {
   useEffect(() => () => { dispatch(ticketPaymentClear()); }, [dispatch]); // component will unmount
 
   useEffect(() => {
-    if (id) navigate(`/ticket/${id}`);
+    if (id) history.push(`/ticket/${id}`);
     return () => {};
-  }, [id, navigate]);
+  }, [id, history]);
 
   let date;
   let movie;
@@ -45,7 +45,7 @@ export default function ClientPayment() {
     seatsString = selectedSeats.map((o) => o.number).join(', ');
   }
 
-  const handleToHomeClick = () => navigate('/');
+  const handleToHomeClick = () => history.push('/');
 
   const handleSubmitClick = () => {
     if (!selectedSeats.length) return;
@@ -53,7 +53,7 @@ export default function ClientPayment() {
     dispatch(ticketPaymentRequest(ids));
   };
 
-  const handleReturnClick = () => navigate(`/hall/${chosenSeance.id}`);
+  const handleReturnClick = () => history.push(`/hall/${chosenSeance.id}`);
 
   return (
     <main>

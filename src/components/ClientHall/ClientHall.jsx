@@ -3,19 +3,20 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import Preloader from '../Preloader/Preloader';
 import { changeClientState, clientChangeSeatSelection, clientSeanceRequest } from '../../redux/client/actions';
 import AcceptinButton from '../AcceptinButton/AcceptinButton';
 
 export default function ClientHall() {
-  const navigate = useNavigate();
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const { seanceID } = useParams();
   const { chosenSeance } = useSelector((state) => state.client);
 
   useEffect(() => {
+    if (chosenSeance && seanceID === chosenSeance.id) return () => {};
     dispatch(changeClientState({ chosenSeance: { id: seanceID } }));
     dispatch(clientSeanceRequest(seanceID));
     return () => {};
@@ -64,10 +65,7 @@ export default function ClientHall() {
 
   const handleSubmitClick = () => {
     if (!selectedSeats.length) return;
-    dispatch(changeClientState({
-      chosenSeats: '',
-    }));
-    navigate('/payment');
+    history.push('/payment');
   };
 
   return (

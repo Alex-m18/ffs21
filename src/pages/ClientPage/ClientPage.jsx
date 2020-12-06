@@ -1,9 +1,20 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import './styles.css';
 import React, { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import {
+  Route,
+  Switch,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import MoviesList from '../../components/MoviesList/MoviesList';
+import ClientHall from '../../components/ClientHall/ClientHall';
+import ClientPayment from '../../components/ClientPayment/ClientPayment';
+import ClientTicket from '../../components/ClientTicket/ClientTicket';
 
 import background from './i/background.jpg';
+import Page404 from '../Page404';
 
 const cssBodyText = `
   background-image: url("${background}");
@@ -25,8 +36,9 @@ const pageHeaderTitleSpanStyle = {
   fontWeight: 100,
 };
 
-export default function ClientPage() {
-  const navigate = useNavigate();
+export default function ClientPage({ basename }) {
+  const { path } = useRouteMatch();
+  const history = useHistory();
 
   useEffect(() => {
     document.body.style.cssText = cssBodyText;
@@ -40,8 +52,8 @@ export default function ClientPage() {
       <header className="page-header" style={pageHeaderStyle}>
         <h1
           className="page-header__title"
-          onClick={() => { navigate(''); }}
-          onKeyPress={(evt) => { if (evt.key === 'Enter') navigate(''); }}
+          onClick={() => { history.push('/'); }}
+          onKeyPress={(evt) => { if (evt.key === 'Enter') history.push('/'); }}
           style={pageHeaderTitleStyle}
         >
           Идём
@@ -50,7 +62,23 @@ export default function ClientPage() {
         </h1>
       </header>
 
-      <Outlet />
+      <Switch>
+        <Route exact path={path}>
+          <MoviesList basename={basename} />
+        </Route>
+        <Route path={`${path}hall/:seanceID`} component={ClientHall} />
+        <Route path={`${path}ticket/:ticketID`} component={ClientTicket} />
+        <Route path={`${path}payment`} component={ClientPayment} />
+        <Route path="*" component={Page404} />
+      </Switch>
     </div>
   );
 }
+
+ClientPage.propTypes = {
+  basename: PropTypes.string,
+};
+
+ClientPage.defaultProps = {
+  basename: '',
+};

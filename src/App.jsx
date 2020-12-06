@@ -1,30 +1,28 @@
-import React from 'react';
 import './App.css';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+// import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+} from 'react-router-dom';
 
 import AdminPage from './pages/AdminPage/AdminPage';
 import ClientPage from './pages/ClientPage/ClientPage';
-import MoviesList from './components/MoviesList/MoviesList';
-import ClientHall from './components/ClientHall/ClientHall';
-import ClientPayment from './components/ClientPayment/ClientPayment';
-import ClientTicket from './components/ClientTicket/ClientTicket';
 import Page404 from './pages/Page404';
+
+const basename = process.env.PUBLIC_URL;
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/admin" element={<AdminPage />} />
-
-        <Route path="/" element={<ClientPage />}>
-          <Route path="hall/:seanceID" element={<ClientHall />} />
-          <Route path="ticket/:ticketID" element={<ClientTicket />} />
-          <Route path="payment" element={<ClientPayment />} />
-          <Route element={<MoviesList />} />
+    <BrowserRouter basename={basename}>
+      <Switch>
+        <Route exact path="/admin" component={AdminPage} />
+        <Route path="/">
+          <ClientPage basename={basename} />
         </Route>
-
-        <Route element={<Page404 />} />
-      </Routes>
+        <Route path="*" component={Page404} />
+      </Switch>
     </BrowserRouter>
   );
 }

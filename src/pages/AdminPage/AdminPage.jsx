@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import './styles.css';
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import background from './i/background.jpg';
@@ -42,7 +42,7 @@ function AdminPage(props) {
     onLogin,
   } = props;
 
-  const navigate = useNavigate();
+  const history = useHistory();
 
   useEffect(() => {
     document.body.style.cssText = bodyStyle;
@@ -58,8 +58,8 @@ function AdminPage(props) {
       <header className="page-header" style={pageHeaderStyle}>
         <h1
           className="page-header__title"
-          onClick={() => { navigate(''); }}
-          onKeyPress={(evt) => { if (evt.key === 'Enter') navigate(''); }}
+          onClick={() => { history.push('/'); }}
+          onKeyPress={(evt) => { if (evt.key === 'Enter') history.push('/'); }}
           style={pageHeaderTitleStyle}
         >
           Идём

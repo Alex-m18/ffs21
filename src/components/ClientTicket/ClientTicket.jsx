@@ -4,7 +4,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import QRCode from 'qrcode.react';
 import ClientHeader from '../ClientHeader/ClientHeader';
 import { ticketClear, ticketRequest } from '../../redux/ticket/actions';
@@ -13,7 +13,7 @@ import AcceptinButton from '../AcceptinButton/AcceptinButton';
 
 export default function ClientTicket() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const { data, loading, error } = useSelector((state) => state.ticket);
   // const { chosenSeance } = useSelector((state) => state.client);
@@ -44,7 +44,7 @@ export default function ClientTicket() {
       .reduce((acc, o) => `${acc}, ${o}`, seats[0]);
   }
 
-  const handleToHomeClick = () => navigate('/');
+  const handleToHomeClick = () => history.push('/');
 
   return (
     <main>
