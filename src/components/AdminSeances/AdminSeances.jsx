@@ -309,7 +309,7 @@ function AdminSeances(props) {
               required: true,
             },
             {
-              title: 'Название зала',
+              title: 'Дата и время сеанса',
               type: 'text',
               value: seances.addForm.data.date,
               placeholder: moment().format('DD.MM.YYYY, HH:mm'),
