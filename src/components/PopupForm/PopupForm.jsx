@@ -71,6 +71,7 @@ const AddForm = (props) => {
 
                   { (field.type === 'option') && (
                     <label className="conf-step__label conf-step__label-fullsize" htmlFor={field.name} key={field.name}>
+                      {field.title}
                       <select className="conf-step__input" name={field.name} required={field.required} onChange={onChangeHandler}>
                         { field.options.map((option) => (
                           <option value={option.value} key={option.value}>{option.title}</option>
