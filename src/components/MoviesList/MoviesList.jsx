@@ -20,14 +20,20 @@ export default function MoviesList({ basename }) {
   const { halls } = useSelector((state) => state.clientHalls);
   const { movies } = useSelector((state) => state.clientMovies);
 
-  useEffect(() => () => {
+  useEffect(() => {
     dispatch(changeClientState({
       chosenSeance: null,
       chosenSeats: null,
     }));
-    dispatch(clientHallsClear());
-    dispatch(clientMoviesClear());
-    dispatch(clientSeancesClear());
+    return () => {
+      dispatch(changeClientState({
+        chosenSeance: null,
+        chosenSeats: null,
+      }));
+      dispatch(clientHallsClear());
+      dispatch(clientMoviesClear());
+      dispatch(clientSeancesClear());
+    };
   }, [dispatch]);
 
   useEffect(() => {
