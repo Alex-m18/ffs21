@@ -43,7 +43,8 @@ function AdminHallsControl(props) {
   const onRemoveFormShowHandler = (id) => {
     onRemoveFormChange({
       id,
-      title: `Вы действительно хотите удалить зал «${halls.data.find((o) => o.id === id).title}»?`,
+      title: `Вы действительно хотите удалить зал «${halls.data.find((o) => o.id === id).title}»?
+      Все сеансы в этом зале будут отменены, а все проданные билеты в этот зал будут аннулированы!`,
     });
     onRemoveFormShow();
   };

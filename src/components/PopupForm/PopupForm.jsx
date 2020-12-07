@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
 import closeImg from './i/close.png';
 import AcceptinButton from '../AcceptinButton/AcceptinButton';
 import './styles.css';
@@ -47,9 +48,9 @@ const AddForm = (props) => {
 
               { fields.map((field) => (
                 <React.Fragment key={field.title}>
-                  { (field.type === 'message') && (
-                    <p className="conf-step__paragraph">{field.title}</p>
-                  )}
+                  { (field.type === 'message') && field.title.split(String.fromCharCode(10)).map((p) => (
+                    <p className="conf-step__paragraph" key={nanoid()}>{p}</p>
+                  ))}
 
                   { (['text', 'number'].includes(field.type)) && (
                     <label className="conf-step__label conf-step__label-fullsize" htmlFor={field.name} key={field.name}>
