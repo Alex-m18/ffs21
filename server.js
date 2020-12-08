@@ -3,6 +3,8 @@ require('dotenv').config();
 const http = require('http');
 const fs = require('fs');
 const Koa = require('koa');
+const serve = require('koa-static');
+const mount = require('koa-mount');
 const Router = require('koa-router');
 const cors = require('koa2-cors');
 const koaBody = require('koa-body');
@@ -435,6 +437,7 @@ router.get('/api/getticket', async (ctx, next) => {
   return fortune(ctx, data);
 });
 
+app.use(mount('/i', serve('./i')));
 app.use(router.routes())
 app.use(router.allowedMethods());
 
