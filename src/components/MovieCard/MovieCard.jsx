@@ -3,12 +3,16 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
-export default function MovieCard({ basename, movie }) {
+export default function MovieCard({ movie }) {
   return (
     <section className="movie">
       <div className="movie__info">
         <div className="movie__poster">
-          <img className="movie__poster-image" alt={movie.posterTitle} src={`${basename}/${movie.posterLink}`} />
+          <img
+            className="movie__poster-image"
+            alt={movie.posterTitle}
+            src={`${/data:image\/*/.test(movie.posterLink) ? '' : `${process.env.REACT_APP_BACKEND_URL}/`}${movie.posterLink}`}
+          />
         </div>
         <div className="movie__description">
           <h2 className="movie__title">{movie.title}</h2>
@@ -49,7 +53,6 @@ export default function MovieCard({ basename, movie }) {
 }
 
 MovieCard.propTypes = {
-  basename: PropTypes.string,
   movie: PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
@@ -67,8 +70,4 @@ MovieCard.propTypes = {
       })),
     })),
   }).isRequired,
-};
-
-MovieCard.defaultProps = {
-  basename: '',
 };

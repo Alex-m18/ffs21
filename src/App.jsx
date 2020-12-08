@@ -18,9 +18,7 @@ function App() {
     <BrowserRouter basename={basename}>
       <Switch>
         <Route exact path="/admin" component={AdminPage} />
-        <Route path="/">
-          <ClientPage basename={basename} />
-        </Route>
+        <Route path="/" component={ClientPage} />
         <Route path="*" component={Page404} />
       </Switch>
     </BrowserRouter>

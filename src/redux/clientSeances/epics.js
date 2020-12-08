@@ -23,7 +23,7 @@ export const clientSeancesRequestEpic = (action$) => action$.pipe(
   exhaustMap((o) => {
     const date = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/getseances`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/getseances`,
       method: 'POST',
       headers: {
         'Content-Type': 'Application/JSON',

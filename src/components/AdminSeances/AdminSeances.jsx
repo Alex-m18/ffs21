@@ -69,6 +69,7 @@ function AdminSeances(props) {
     return () => {};
   // eslint-disable-next-line
   }, [movies]);
+  // if (!movies) return null;
 
   useEffect(() => {
     refreshHandler();
@@ -77,7 +78,14 @@ function AdminSeances(props) {
   }, []);
 
   const onSaveHandler = () => {
-    saveMovies(movies.data.filter((o) => !o.id));
+    saveMovies(movies.data.filter((o) => !o.id).map((o) => ({
+      title: o.title,
+      description: o.duration,
+      origin: o.origin,
+      duration: o.duration,
+      posterTitle: o.posterTitle,
+      posterLink: o.posterLink,
+    })));
   };
   useEffect(() => {
     if (!movies.savingSuccess) return () => {};
@@ -97,13 +105,30 @@ function AdminSeances(props) {
   const onAddMovieFormChangeHandler = onChangeHandler(onAddMovieFormChange);
   const onAddSeanceFormChangeHandler = onChangeHandler(onAddSeanceFormChange);
 
+  const onPosterChangeHandler = (files) => {
+    const reader = new FileReader();
+    reader.onload = () => onAddMovieFormChange({
+      posterTitle: files[0].name,
+      posterLink: reader.result,
+      posterFiles: files,
+    });
+    reader.readAsDataURL(files[0]);
+  };
+
   const onAddHandler = (formData, onAddCallback/* , formCloseCallback = () => {} */) => () => {
     if ([...Object.values(formData)].every((o) => o !== '')) {
       onAddCallback(formData);
       // formCloseCallback();
     }
   };
-  const onAddMovieHandler = onAddHandler(movies.addForm.data, addMovie, onAddMovieFormHide);
+  const onAddMovieHandler = onAddHandler(movies.addForm.data, (data) => {
+    if (data && movies.data.map((o) => o.title).includes(data.title)) {
+      // eslint-disable-next-line no-alert
+      alert('Ошибка! Фильм с таким названием уже есть');
+      return;
+    }
+    addMovie(data);
+  }, onAddMovieFormHide);
   const onAddSeanceHandler = onAddHandler(seances.addForm.data, addSeance, onAddSeanceFormHide);
 
   const onAddSeanceFormShowHandler = (movieID) => {
@@ -178,17 +203,21 @@ function AdminSeances(props) {
         </p>
 
         <div className="conf-step__movies">
-          { movies && movies.data.map((movie) => (
+          { movies && movies.data && movies.data.map((movie) => (
             <div
               className="conf-step__movie"
-              key={nanoid()}
+              key={movie.title}
               style={{ backgroundColor: colors[movie.title] }}
               onClick={() => onAddSeanceFormShowHandler(movie.id)}
               role="button"
               tabIndex={0}
               onKeyPress={(evt) => { if (evt.key === 'Enter') onAddSeanceFormShowHandler(movie.id); }}
             >
-              <img className="conf-step__movie-poster" alt="poster" src={movie.posterLink} />
+              <img
+                className="conf-step__movie-poster"
+                alt="poster"
+                src={`${/data:image\/*/.test(movie.posterLink) ? '' : `${process.env.REACT_APP_BACKEND_URL}/`}${movie.posterLink}`}
+              />
               <h3 className="conf-step__movie-title">{movie.title}</h3>
               <p className="conf-step__movie-duration">{`${movie.duration} минут`}</p>
             </div>
@@ -288,6 +317,16 @@ function AdminSeances(props) {
               min: 1,
               step: 1,
             },
+            {
+              title: 'Постер (не более 2 Mb)',
+              type: 'file',
+              name: 'posterFiles',
+              files: movies.addForm.data.posterFiles,
+              required: true,
+              accept: 'image/*',
+              onChange: onPosterChangeHandler,
+              maxSize: 2097152,
+            },
           ]}
           submitTitle="Добавить фильм"
           onChange={onAddMovieFormChangeHandler}
@@ -373,6 +412,9 @@ AdminSeances.propTypes = {
           PropTypes.number,
         ]).isRequired,
         origin: PropTypes.string.isRequired,
+        posterTitle: PropTypes.string,
+        posterLink: PropTypes.string,
+        posterFiles: PropTypes.instanceOf(FileList),
       }).isRequired,
     }).isRequired,
     loading: PropTypes.bool.isRequired,

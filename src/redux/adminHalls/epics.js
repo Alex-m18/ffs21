@@ -35,7 +35,7 @@ export const adminHallsRequestEpic = (action$, state$) => action$.pipe(
   withLatestFrom(state$),
   exhaustMap(([, state]) => (
     ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/halls`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/halls`,
       method: 'GET',
       headers: {
         Authorization: state.user.data.token,
@@ -58,7 +58,7 @@ export const adminHallsRemoveEpic = (action$, state$) => action$.pipe(
   exhaustMap(([o, state]) => {
     const id = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/halls/${id}`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/halls/${id}`,
       method: 'DELETE',
       headers: {
         Authorization: state.user.data.token,
@@ -81,7 +81,7 @@ export const adminHallsAddEpic = (action$, state$) => action$.pipe(
   exhaustMap(([o, state]) => {
     const data = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/halls`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/halls`,
       method: 'POST',
       headers: {
         Authorization: state.user.data.token,
@@ -105,7 +105,7 @@ export const adminHallsUpdateEpic = (action$, state$) => action$.pipe(
   exhaustMap(([o, state]) => {
     const data = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/hall`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/hall`,
       method: 'PUT',
       headers: {
         Authorization: state.user.data.token,

@@ -22,7 +22,7 @@ export const clientSeanceRequestEpic = (action$) => action$.pipe(
   exhaustMap((o) => {
     const seanceID = o.payload;
     return ajax.getJSON(
-      `${process.env.REACT_APP_BACKEND_URL}/getseancestate?seanceID=${seanceID}`,
+      `${process.env.REACT_APP_BACKEND_URL}/api/getseancestate?seanceID=${seanceID}`,
     ).pipe(
       retry(5),
       map((res) => clientSeanceSuccess(res)),

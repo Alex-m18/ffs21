@@ -28,7 +28,7 @@ export const adminSeancesRequestEpic = (action$, state$) => action$.pipe(
   withLatestFrom(state$),
   exhaustMap(([, state]) => (
     ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/seances`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/seances`,
       method: 'GET',
       headers: {
         Authorization: state.user.data.token,
@@ -51,7 +51,7 @@ export const adminSeancesSaveEpic = (action$, state$) => action$.pipe(
   exhaustMap(([o, state]) => {
     const data = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/seances`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/seances`,
       method: 'POST',
       headers: {
         Authorization: state.user.data.token,

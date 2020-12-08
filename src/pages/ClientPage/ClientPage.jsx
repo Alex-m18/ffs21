@@ -7,7 +7,6 @@ import {
   useHistory,
   useRouteMatch,
 } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import MoviesList from '../../components/MoviesList/MoviesList';
 import ClientHall from '../../components/ClientHall/ClientHall';
 import ClientPayment from '../../components/ClientPayment/ClientPayment';
@@ -36,7 +35,7 @@ const pageHeaderTitleSpanStyle = {
   fontWeight: 100,
 };
 
-export default function ClientPage({ basename }) {
+export default function ClientPage() {
   const { path } = useRouteMatch();
   const history = useHistory();
 
@@ -63,9 +62,7 @@ export default function ClientPage({ basename }) {
       </header>
 
       <Switch>
-        <Route exact path={path}>
-          <MoviesList basename={basename} />
-        </Route>
+        <Route exact path={path} component={MoviesList} />
         <Route path={`${path}hall/:seanceID`} component={ClientHall} />
         <Route path={`${path}ticket/:ticketID`} component={ClientTicket} />
         <Route path={`${path}payment`} component={ClientPayment} />
@@ -74,11 +71,3 @@ export default function ClientPage({ basename }) {
     </div>
   );
 }
-
-ClientPage.propTypes = {
-  basename: PropTypes.string,
-};
-
-ClientPage.defaultProps = {
-  basename: '',
-};

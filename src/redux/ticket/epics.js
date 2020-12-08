@@ -22,7 +22,7 @@ export const ticketRequestEpic = (action$) => action$.pipe(
   exhaustMap((o) => {
     const id = o.payload;
     return ajax.getJSON(
-      `${process.env.REACT_APP_BACKEND_URL}/getticket?id=${id}`,
+      `${process.env.REACT_APP_BACKEND_URL}/api/getticket?id=${id}`,
     ).pipe(
       retry(5),
       map((res) => ticketSuccess(res)),

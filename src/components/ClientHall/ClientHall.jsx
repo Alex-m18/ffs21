@@ -20,7 +20,8 @@ export default function ClientHall() {
     dispatch(changeClientState({ chosenSeance: { id: seanceID } }));
     dispatch(clientSeanceRequest(seanceID));
     return () => {};
-  }, [seanceID, dispatch]);
+  // eslint-disable-next-line
+}, [seanceID, dispatch]);
 
   let movie;
   let hall;

@@ -22,7 +22,7 @@ export const ticketPaymentRequestEpic = (action$) => action$.pipe(
   exhaustMap((o) => {
     const seatIDs = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/payment`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/payment`,
       method: 'POST',
       headers: {
         'Content-Type': 'Application/JSON',

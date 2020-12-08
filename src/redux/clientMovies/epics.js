@@ -22,7 +22,7 @@ export const clientMoviesRequestEpic = (action$) => action$.pipe(
   exhaustMap((o) => {
     const IDs = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/getmovies`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/getmovies`,
       method: 'POST',
       headers: {
         'Content-Type': 'Application/JSON',

@@ -22,7 +22,7 @@ export const clientHallsRequestEpic = (action$) => action$.pipe(
   exhaustMap((o) => {
     const IDs = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/gethalls`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/gethalls`,
       method: 'POST',
       headers: {
         'Content-Type': 'Application/JSON',

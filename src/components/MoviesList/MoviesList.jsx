@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { clientSeancesClear, clientSeancesRequest } from '../../redux/clientSean
 import { clientHallsClear, clientHallsRequest } from '../../redux/clientHalls/actions';
 import { clientMoviesClear, clientMoviesRequest } from '../../redux/clientMovies/actions';
 
-export default function MoviesList({ basename }) {
+export default function MoviesList() {
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -94,7 +93,6 @@ export default function MoviesList({ basename }) {
                 movie={movie}
                 onSeanceClick={handleSeanceClick}
                 key={movie.id}
-                basename={basename}
               />
             ))
         }
@@ -102,11 +100,3 @@ export default function MoviesList({ basename }) {
     </>
   );
 }
-
-MoviesList.propTypes = {
-  basename: PropTypes.string,
-};
-
-MoviesList.defaultProps = {
-  basename: '',
-};

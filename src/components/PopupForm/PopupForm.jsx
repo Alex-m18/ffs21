@@ -20,6 +20,20 @@ const AddForm = (props) => {
     onChange(name, value);
   };
 
+  const onFileChangeHandler = (evt, options) => {
+    const { maxSize } = options;
+    const onFileChange = options.onChange;
+    if (!onFileChange) return;
+    if (!evt.target.files[0]) return;
+
+    if (maxSize && evt.target.files[0].size > maxSize) {
+      // eslint-disable-next-line no-param-reassign
+      evt.target.value = '';
+      return;
+    }
+    onFileChange(evt.target.files);
+  };
+
   const handleSubmit = (evt) => {
     evt.preventDefault();
     onSubmit();
@@ -52,7 +66,7 @@ const AddForm = (props) => {
                     <p className="conf-step__paragraph" key={nanoid()}>{p}</p>
                   ))}
 
-                  { (['text', 'number'].includes(field.type)) && (
+                  { (['text', 'number', 'date'].includes(field.type)) && (
                     <label className="conf-step__label conf-step__label-fullsize" htmlFor={field.name} key={field.name}>
                       {field.title}
                       <input
@@ -66,6 +80,23 @@ const AddForm = (props) => {
                         max={field.max}
                         min={field.min}
                         step={field.step}
+                      />
+                    </label>
+                  )}
+
+                  { (field.type === 'file') && (
+                    <label className="conf-step__label conf-step__label-fullsize" htmlFor={field.name} key={field.name}>
+                      {field.title}
+                      <input
+                        className="conf-step__input"
+                        type={field.type}
+                        name={field.name}
+                        onChange={(evt) => onFileChangeHandler(evt, field)}
+                        value={field.value}
+                        files={field.files}
+                        required={field.required}
+                        accept={field.accept}
+                        multiple={field.multiple}
                       />
                     </label>
                   )}
@@ -118,9 +149,13 @@ AddForm.propTypes = {
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
-    ]).isRequired,
+    ]),
+    files: PropTypes.instanceOf(FileList),
+    onChange: PropTypes.func,
     placeholder: PropTypes.string,
     required: PropTypes.bool,
+    accept: PropTypes.string,
+    multiple: PropTypes.bool,
   })),
 };
 

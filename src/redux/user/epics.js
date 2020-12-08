@@ -22,7 +22,7 @@ export const userLoginRequestEpic = (action$) => action$.pipe(
   exhaustMap((o) => {
     const { email, password } = o.payload;
     return ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/login`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/login`,
       method: 'POST',
       headers: {
         'Content-Type': 'Application/JSON',

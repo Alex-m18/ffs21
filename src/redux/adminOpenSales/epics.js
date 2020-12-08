@@ -21,7 +21,7 @@ export const adminOpenSaleRequestEpic = (action$, state$) => action$.pipe(
   withLatestFrom(state$),
   exhaustMap(([, state]) => (
     ajax({
-      url: `${process.env.REACT_APP_BACKEND_URL}/opensales`,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/opensales`,
       method: 'GET',
       headers: {
         Authorization: state.user.data.token,
