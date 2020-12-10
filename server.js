@@ -211,12 +211,28 @@ router.post('/api/movies', auth, async (ctx, next) => {
     duration: o.duration,
     posterTitle: o.posterTitle,
     posterLink: o.posterLink,
-  })).filter((o) => (
-    !o.id && o.title && o.description && o.origin && o.duration
+    removed: o.removed,
+  }));
+  const moviesToAdd = reqMovies.filter((o) => (
+    !o.id && o.title && o.description && o.origin && o.duration && o.posterLink && o.posterTitle
   ));
+  const moviesToRemove = reqMovies.filter((o) => o.id && o.removed);
+
+  const newMovies = moviesToAdd.map((o) => ({
+    id: uuid(),
+    title: o.title,
+    description: o.description,
+    origin: o.origin,
+    duration: o.duration,
+    posterTitle: o.posterTitle,
+    posterLink: o.posterLink,
+  }));
+
+  //////////////////////////////
 
   const result = await movies
-    .push(reqMovies.map((o) => ({ ...o, id: uuid() })))
+    .push(newMovies)
+    .then(() => movies.delete(moviesToRemove))
     .then(() => movies.all())
     .then((movies) => ({ success: true, movies }))
     .catch((err) => err);
