@@ -122,14 +122,27 @@ function AdminSeances(props) {
     }
   };
   const onAddMovieHandler = onAddHandler(movies.addForm.data, (data) => {
-    if (data && movies.data.map((o) => o.title).includes(data.title)) {
+    if (!data) return;
+    if (movies.data.map((o) => o.title).includes(data.title)) {
       // eslint-disable-next-line no-alert
       alert('Ошибка! Фильм с таким названием уже есть');
       return;
     }
     addMovie(data);
   }, onAddMovieFormHide);
-  const onAddSeanceHandler = onAddHandler(seances.addForm.data, addSeance, onAddSeanceFormHide);
+  const onAddSeanceHandler = onAddHandler(seances.addForm.data, (data) => {
+    if (!data) return;
+    const dataMovie = movies.data.find((o) => o.id === data.movieID);
+
+    if (!seances.data.filter((o) => o.hallID === data.hallID).every((o) => (
+      Math.abs(moment(o.date).diff(moment(data.date, 'DD.MM.YYYY, HH:mm'), 'minutes')) >= dataMovie.duration
+    ))) {
+      // eslint-disable-next-line no-alert
+      alert('Ошибка! Сеанс пересекается по времени с другим');
+      return;
+    }
+    addSeance(data);
+  }, onAddSeanceFormHide);
 
   const onAddSeanceFormShowHandler = (movieID) => {
     if (!movieID) {
