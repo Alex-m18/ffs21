@@ -17,6 +17,10 @@ import {
   adminMoviesSaveRequest,
   adminMoviesSaveSuccessClear,
   adminMoviesSuccessClear,
+  adminMoviesRemoveFormShow,
+  adminMoviesRemoveFormHide,
+  adminMoviesRemoveFormChange,
+  adminMoviesRemove,
 } from '../../redux/adminMovies/actions';
 import {
   adminSeancesAdd,
@@ -45,6 +49,10 @@ function AdminSeances(props) {
     saveMovies,
     loadingMoviesSuccessClear,
     saveMoviesSuccessClear,
+    onRemoveMovieFormShow,
+    onRemoveMovieFormHide,
+    onRemoveMovieFormChange,
+    onMovieRemove,
     seances,
     getSeances,
     onAddSeanceFormShow,
@@ -78,14 +86,7 @@ function AdminSeances(props) {
   }, []);
 
   const onSaveHandler = () => {
-    saveMovies(movies.data.filter((o) => !o.id).map((o) => ({
-      title: o.title,
-      description: o.duration,
-      origin: o.origin,
-      duration: o.duration,
-      posterTitle: o.posterTitle,
-      posterLink: o.posterLink,
-    })));
+    saveMovies(movies.data.filter((o) => !o.id || o.removed));
   };
   useEffect(() => {
     if (!movies.savingSuccess) return () => {};
@@ -159,6 +160,25 @@ function AdminSeances(props) {
     onAddSeanceFormShow();
   };
 
+  const onRemoveMovieFormShowHandler = (movie) => {
+    onRemoveMovieFormChange({
+      data: {
+        movie,
+        title: `Вы действительно хотите удалить фильм «${movie.title}»?
+        Все сеансы будут сняты, а купленные билеты аннулированы`,
+      },
+    });
+    onRemoveMovieFormShow();
+  };
+  const onRemoveMovieHandler = () => {
+    const { movie } = movies.removeForm.data;
+    seances.data
+      .filter((o) => o.movieID === movie.id)
+      .forEach((o) => onSeanceRemove(o));
+    onMovieRemove(movie);
+    onRemoveMovieFormHide();
+  };
+
   const onRemoveSeanceFormShowHandler = (seance) => {
     onRemoveSeanceFormChange({
       data: {
@@ -214,14 +234,19 @@ function AdminSeances(props) {
             onClick={onAddMovieFormShow}
           />
         </p>
+        <p className="conf-step__paragraph" style={{ marginTop: '0px' }}>Для удаления фильма нажмите по нему правой кнопкой мыши</p>
 
         <div className="conf-step__movies">
-          { movies && movies.data && movies.data.map((movie) => (
+          { movies && movies.data.filter((o) => !o.removed).map((movie) => (
             <div
               className="conf-step__movie"
               key={movie.title}
               style={{ backgroundColor: colors[movie.title] }}
               onClick={() => onAddSeanceFormShowHandler(movie.id)}
+              onContextMenu={(evt) => {
+                evt.preventDefault();
+                onRemoveMovieFormShowHandler(movie);
+              }}
               role="button"
               tabIndex={0}
               onKeyPress={(evt) => { if (evt.key === 'Enter') onAddSeanceFormShowHandler(movie.id); }}
@@ -237,7 +262,9 @@ function AdminSeances(props) {
           ))}
         </div>
 
-        <div className="conf-step__seances">
+        <p className="conf-step__paragraph">Для добавления сеанса нажмите на соответствующий фильм</p>
+
+        <div className="conf-step__seances" style={{ marginTop: '0px' }}>
           { halls.data.map((hall) => (
             <div className="conf-step__seances-hall" key={nanoid()}>
               <h3 className="conf-step__seances-title">{hall.title}</h3>
@@ -269,6 +296,7 @@ function AdminSeances(props) {
             </div>
           ))}
         </div>
+        <p className="conf-step__paragraph" style={{ marginTop: '0px' }}>Нажмите на сеанс для его удаления</p>
 
         <fieldset className="conf-step__buttons text-center">
           <AcceptinButton
@@ -376,6 +404,19 @@ function AdminSeances(props) {
         />
       )}
 
+      { movies.removeForm.show && (
+        <PopupForm
+          title="Удаление фильма"
+          fields={[{
+            title: movies.removeForm.data.title,
+            type: 'message',
+          }]}
+          submitTitle="Удалить"
+          onSubmit={onRemoveMovieHandler}
+          onClose={onRemoveMovieFormHide}
+        />
+      )}
+
       { seances.removeForm.show && (
         <PopupForm
           title="Снятие с сеанса"
@@ -430,6 +471,19 @@ AdminSeances.propTypes = {
         posterFiles: PropTypes.instanceOf(FileList),
       }).isRequired,
     }).isRequired,
+    removeForm: PropTypes.shape({
+      show: PropTypes.bool.isRequired,
+      data: PropTypes.shape({
+        movie: PropTypes.shape({
+          id: PropTypes.string,
+          title: PropTypes.string.isRequired,
+          posterTitle: PropTypes.string,
+          posterLink: PropTypes.string,
+          duration: PropTypes.number,
+        }).isRequired,
+        title: PropTypes.string.isRequired,
+      }).isRequired,
+    }).isRequired,
     loading: PropTypes.bool.isRequired,
     loadingError: PropTypes.shape({ message: PropTypes.string }),
     loadingSuccess: PropTypes.bool.isRequired,
@@ -478,6 +532,10 @@ AdminSeances.propTypes = {
   saveMovies: PropTypes.func.isRequired,
   loadingMoviesSuccessClear: PropTypes.func.isRequired,
   saveMoviesSuccessClear: PropTypes.func.isRequired,
+  onRemoveMovieFormShow: PropTypes.func.isRequired,
+  onRemoveMovieFormHide: PropTypes.func.isRequired,
+  onRemoveMovieFormChange: PropTypes.func.isRequired,
+  onMovieRemove: PropTypes.func.isRequired,
   onAddSeanceFormShow: PropTypes.func.isRequired,
   onAddSeanceFormHide: PropTypes.func.isRequired,
   onAddSeanceFormChange: PropTypes.func.isRequired,
@@ -504,6 +562,10 @@ const mapDispatchToProps = (dispatch) => ({
   saveMovies: (data) => dispatch(adminMoviesSaveRequest(data)),
   loadingMoviesSuccessClear: () => dispatch(adminMoviesSuccessClear()),
   saveMoviesSuccessClear: () => dispatch(adminMoviesSaveSuccessClear()),
+  onRemoveMovieFormShow: () => dispatch(adminMoviesRemoveFormShow()),
+  onRemoveMovieFormHide: () => dispatch(adminMoviesRemoveFormHide()),
+  onRemoveMovieFormChange: (data) => dispatch(adminMoviesRemoveFormChange(data)),
+  onMovieRemove: (data) => dispatch(adminMoviesRemove(data)),
   getSeances: () => dispatch(adminSeancesRequest()),
   onAddSeanceFormShow: () => dispatch(adminSeancesAddFormShow()),
   onAddSeanceFormHide: () => dispatch(adminSeancesAddFormHide()),

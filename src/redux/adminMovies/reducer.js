@@ -4,9 +4,13 @@ import {
   ADMIN_MOVIES_REQUEST,
   ADMIN_MOVIES_SUCCESS,
   ADMIN_MOVIES_ADD,
+  ADMIN_MOVIES_REMOVE,
   ADMIN_MOVIES_ADD_FORM_SHOW,
   ADMIN_MOVIES_ADD_FORM_HIDE,
   ADMIN_MOVIES_ADD_FORM_CHANGE,
+  ADMIN_MOVIES_REMOVE_FORM_SHOW,
+  ADMIN_MOVIES_REMOVE_FORM_HIDE,
+  ADMIN_MOVIES_REMOVE_FORM_CHANGE,
   ADMIN_MOVIES_SAVE_REQUEST,
   ADMIN_MOVIES_SAVE_SUCCESS,
   ADMIN_MOVIES_SAVE_FAILURE,
@@ -26,6 +30,19 @@ const initialState = {
       posterTitle: '',
       posterLink: '',
       posterFiles: undefined,
+    },
+  },
+  removeForm: {
+    show: false,
+    data: {
+      movie: {
+        title: '',
+        id: '',
+        duration: 0,
+        posterTitle: '',
+        posterLink: '',
+      },
+      title: '',
     },
   },
   loading: false,
@@ -60,6 +77,24 @@ export default function adminMoviesReducer(state = initialState, action) {
         addForm: initialState.addForm,
       };
 
+    case ADMIN_MOVIES_REMOVE: {
+      const movie = action.payload;
+      if (!movie) return state;
+      if (movie.id) {
+        return {
+          ...state,
+          data: state.data.map((o) => {
+            if (o.id === movie.id) return { ...o, removed: true };
+            return o;
+          }),
+        };
+      }
+      return {
+        ...state,
+        data: state.data.filter((o) => !(o.title === movie.title)),
+      };
+    }
+
     case ADMIN_MOVIES_SAVE_REQUEST:
       return { ...state, saving: true, savingError: null, savingSuccess: false };
     case ADMIN_MOVIES_SAVE_SUCCESS:
@@ -87,6 +122,21 @@ export default function adminMoviesReducer(state = initialState, action) {
           data: { ...state.addForm.data, ...action.payload },
         },
       };
+
+    case ADMIN_MOVIES_REMOVE_FORM_SHOW:
+      return { ...state, removeForm: { ...state.removeForm, show: true } };
+    case ADMIN_MOVIES_REMOVE_FORM_HIDE:
+      return { ...state, removeForm: { ...state.removeForm, show: false } };
+    case ADMIN_MOVIES_REMOVE_FORM_CHANGE:
+      return {
+        ...state,
+        removeForm: {
+          ...state.removeForm,
+          ...action.payload,
+          data: { ...state.removeForm.data, ...action.payload.data },
+        },
+      };
+
     default:
       return state;
   }
