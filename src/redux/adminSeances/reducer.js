@@ -17,10 +17,12 @@ import {
   ADMIN_SEANCES_SAVE_SUCCESS,
   ADMIN_SEANCES_SAVE_FAILURE,
   ADMIN_SEANCES_SAVE_SUCCESS_CLEAR,
+  ADMIN_SEANCES_CHANGE_DATE,
 } from './types';
 
 const initialState = {
   data: [],
+  date: moment().startOf('day'),
   addForm: {
     show: false,
     data: {
@@ -137,6 +139,9 @@ export default function adminSeancesReducer(state = initialState, action) {
           data: { ...state.removeForm.data, ...action.payload.data },
         },
       };
+
+    case ADMIN_SEANCES_CHANGE_DATE:
+      return { ...state, date: action.payload };
 
     default:
       return state;

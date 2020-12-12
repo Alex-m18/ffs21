@@ -16,6 +16,7 @@ import {
   ADMIN_SEANCES_SAVE_SUCCESS,
   ADMIN_SEANCES_SAVE_REQUEST,
   ADMIN_SEANCES_SAVE_FAILURE,
+  ADMIN_SEANCES_CHANGE_DATE,
 } from './types';
 
 export const adminSeancesRequest = (id) => ({ type: ADMIN_SEANCES_REQUEST, payload: id });
@@ -37,3 +38,5 @@ export const adminSeancesAddFormChange = (data) => ({ type: ADMIN_SEANCES_ADD_FO
 export const adminSeancesRemoveFormShow = () => ({ type: ADMIN_SEANCES_REMOVE_FORM_SHOW });
 export const adminSeancesRemoveFormHide = () => ({ type: ADMIN_SEANCES_REMOVE_FORM_HIDE });
 export const adminSeancesRemoveFormChange = (data) => ({ type: ADMIN_SEANCES_REMOVE_FORM_CHANGE, payload: data });
+
+export const adminSeancesChangeDate = (data) => ({ type: ADMIN_SEANCES_CHANGE_DATE, payload: data });

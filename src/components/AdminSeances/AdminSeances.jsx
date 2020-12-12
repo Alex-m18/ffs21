@@ -26,6 +26,7 @@ import {
   adminSeancesAdd,
   adminSeancesAddFormChange,
   adminSeancesAddFormHide, adminSeancesAddFormShow,
+  adminSeancesChangeDate,
   adminSeancesRemove,
   adminSeancesRemoveFormChange,
   adminSeancesRemoveFormHide,
@@ -65,6 +66,7 @@ function AdminSeances(props) {
     onRemoveSeanceFormHide,
     onRemoveSeanceFormChange,
     onSeanceRemove,
+    onSeancesChangeDate,
   } = props;
 
   const refreshHandler = () => {
@@ -202,18 +204,23 @@ function AdminSeances(props) {
     onSeanceRemove(seances.removeForm.data.seance);
     onRemoveSeanceFormHide();
   };
+  const onSeancesChangeDateHandler = (evt) => {
+    const date = moment(evt.target.value, moment.HTML5_FMT.DATE);
+    onSeancesChangeDate(date);
+  };
 
   const [timeline, setTimeline] = useState(1440);
   useEffect(() => {
     if (!seances.data.length) return () => {};
     const tl = seances.data
       .filter((o) => !o.removed)
+      .filter((o) => moment(o.date).isBetween(seances.date, moment(seances.date).add(1, 'day'), undefined, '[)'))
       .reduce((acc, cur) => {
-        const curMinutes = moment(cur.date).diff(moment(seances.data[0].date), 'minutes')
+        const curMinutes = moment(cur.date).diff(moment(seances.date), 'minutes')
           + movies.data.find((o) => o.id === cur.movieID).duration;
         if (curMinutes > acc) return curMinutes;
         return acc;
-      }, 1);
+      }, 1440);
     setTimeline(tl);
     return () => {};
   // eslint-disable-next-line
@@ -275,12 +282,24 @@ function AdminSeances(props) {
         <p className="conf-step__paragraph">Для добавления сеанса нажмите на соответствующий фильм</p>
 
         <div className="conf-step__seances" style={{ marginTop: '0px' }}>
+          <p className="conf-step__paragraph">
+            Сетка на дату:
+            <input
+              className="conf-step__paragraph"
+              type="date"
+              value={seances.date.format(moment.HTML5_FMT.DATE)}
+              onChange={onSeancesChangeDateHandler}
+              min={moment().format(moment.HTML5_FMT.DATE)}
+              max={moment().add(3, 'weeks').subtract(1, 'day').format(moment.HTML5_FMT.DATE)}
+            />
+          </p>
           { halls.data.map((hall) => (
             <div className="conf-step__seances-hall" key={nanoid()}>
               <h3 className="conf-step__seances-title">{hall.title}</h3>
               <div className="conf-step__seances-timeline">
                 { seances && seances.data
                   .filter((o) => o.hallID === hall.id && !o.removed)
+                  .filter((o) => moment(o.date).isBetween(seances.date, moment(seances.date).add(1, 'day'), undefined, '[)'))
                   .map((seance) => (
                     <div
                       className="conf-step__seances-movie"
@@ -290,7 +309,7 @@ function AdminSeances(props) {
                         backgroundColor: colors[
                           movies.data.find((o) => o.id === seance.movieID).title
                         ],
-                        left: `${moment(seance.date).diff(moment(seances.data[0].date), 'minutes') / timeline * 100}%`,
+                        left: `${moment(seance.date).diff(seances.date, 'minutes') / timeline * 100}%`,
                       }}
                       title={`${moment(seance.date).format('DD.MM.YYYY, HH:mm')}`}
                       role="button"
@@ -511,6 +530,7 @@ AdminSeances.propTypes = {
       date: PropTypes.string.isRequired,
       state: PropTypes.string,
     })).isRequired,
+    date: PropTypes.instanceOf(moment).isRequired,
     addForm: PropTypes.shape({
       show: PropTypes.bool.isRequired,
       data: PropTypes.shape({
@@ -558,6 +578,7 @@ AdminSeances.propTypes = {
   onRemoveSeanceFormHide: PropTypes.func.isRequired,
   onRemoveSeanceFormChange: PropTypes.func.isRequired,
   onSeanceRemove: PropTypes.func.isRequired,
+  onSeancesChangeDate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -589,6 +610,7 @@ const mapDispatchToProps = (dispatch) => ({
   onRemoveSeanceFormHide: () => dispatch(adminSeancesRemoveFormHide()),
   onRemoveSeanceFormChange: (data) => dispatch(adminSeancesRemoveFormChange(data)),
   onSeanceRemove: (data) => dispatch(adminSeancesRemove(data)),
+  onSeancesChangeDate: (data) => dispatch(adminSeancesChangeDate(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminSeances);
