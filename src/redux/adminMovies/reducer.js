@@ -74,7 +74,6 @@ export default function adminMoviesReducer(state = initialState, action) {
       return {
         ...state,
         data: [...state.data, action.payload],
-        addForm: initialState.addForm,
       };
 
     case ADMIN_MOVIES_REMOVE: {

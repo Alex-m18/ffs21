@@ -26,7 +26,7 @@ const initialState = {
     data: {
       movieID: '',
       hallID: '',
-      date: '',
+      date: moment().add(2, 'hour').startOf('hour').format(moment.HTML5_FMT.DATETIME_LOCAL),
       fields: [],
     },
   },
@@ -59,8 +59,8 @@ export default function adminSeancesReducer(state = initialState, action) {
 
     case ADMIN_SEANCES_ADD: {
       const data = action.payload;
-      const date = moment(data.date, 'DD.MM.YYYY, HH:mm');
-      if (!date.isValid() || moment().isAfter(date)) return state;
+      const date = moment(data.date, moment.HTML5_FMT.DATETIME_LOCAL);
+      if (!date.isValid()) return state;
       const movie = {
         movieID: data.movieID,
         hallID: data.hallID,
@@ -71,7 +71,6 @@ export default function adminSeancesReducer(state = initialState, action) {
         data: [...state.data, movie].sort((a, b) => (
           moment(a.date).isAfter(moment(b.date)) ? 1 : -1
         )),
-        addForm: initialState.addForm,
       };
     }
 

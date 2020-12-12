@@ -116,33 +116,43 @@ function AdminSeances(props) {
     reader.readAsDataURL(files[0]);
   };
 
-  const onAddHandler = (formData, onAddCallback/* , formCloseCallback = () => {} */) => () => {
+  const onAddHandler = (formData, onAddCallback, formCloseCallback = () => {}) => () => {
     if ([...Object.values(formData)].every((o) => o !== '')) {
-      onAddCallback(formData);
-      // formCloseCallback();
+      if (onAddCallback(formData)) formCloseCallback();
     }
   };
   const onAddMovieHandler = onAddHandler(movies.addForm.data, (data) => {
-    if (!data) return;
+    if (!data) return false;
     if (movies.data.map((o) => o.title).includes(data.title)) {
       // eslint-disable-next-line no-alert
       alert('Ошибка! Фильм с таким названием уже есть');
-      return;
+      return false;
     }
     addMovie(data);
+    return true;
   }, onAddMovieFormHide);
   const onAddSeanceHandler = onAddHandler(seances.addForm.data, (data) => {
-    if (!data) return;
-    const dataMovie = movies.data.find((o) => o.id === data.movieID);
+    if (!data) return false;
+    const newMovie = movies.data.find((o) => o.id === data.movieID);
+    const newMovieStart = moment(data.date, moment.HTML5_FMT.DATETIME_LOCAL);
+    if (moment().isAfter(newMovieStart)) {
+      // eslint-disable-next-line no-alert
+      alert('Ошибка! Попытка создать сеанс в прошлом');
+      return false;
+    }
 
-    if (!seances.data.filter((o) => o.hallID === data.hallID).every((o) => (
-      Math.abs(moment(o.date).diff(moment(data.date, 'DD.MM.YYYY, HH:mm'), 'minutes')) >= dataMovie.duration
-    ))) {
+    if (!seances.data.filter((o) => o.hallID === data.hallID).every((o) => {
+      const seanceMovie = movies.data.find((m) => m.id === o.movieID);
+      const seanceMovieStart = moment(o.date);
+      return (newMovieStart.diff(seanceMovieStart, 'minutes') >= seanceMovie.duration
+        || newMovieStart.diff(seanceMovieStart, 'minutes') <= -newMovie.duration);
+    })) {
       // eslint-disable-next-line no-alert
       alert('Ошибка! Сеанс пересекается по времени с другим');
-      return;
+      return false;
     }
     addSeance(data);
+    return true;
   }, onAddSeanceFormHide);
 
   const onAddSeanceFormShowHandler = (movieID) => {
@@ -390,9 +400,8 @@ function AdminSeances(props) {
             },
             {
               title: 'Дата и время сеанса',
-              type: 'text',
-              value: seances.addForm.data.date,
-              placeholder: moment().format('DD.MM.YYYY, HH:mm'),
+              type: 'datetime-local',
+              value: moment(seances.addForm.data.date).format('YYYY-MM-DDTHH:mm'),
               name: 'date',
               required: true,
             },
@@ -479,7 +488,10 @@ AdminSeances.propTypes = {
           title: PropTypes.string.isRequired,
           posterTitle: PropTypes.string,
           posterLink: PropTypes.string,
-          duration: PropTypes.number,
+          duration: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+          ]),
         }).isRequired,
         title: PropTypes.string.isRequired,
       }).isRequired,

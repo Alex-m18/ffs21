@@ -66,7 +66,7 @@ const AddForm = (props) => {
                     <p className="conf-step__paragraph" key={nanoid()}>{p}</p>
                   ))}
 
-                  { (['text', 'number', 'date'].includes(field.type)) && (
+                  { (['text', 'number'].includes(field.type)) && (
                     <label className="conf-step__label conf-step__label-fullsize" htmlFor={field.name} key={field.name}>
                       {field.title}
                       <input
@@ -79,6 +79,21 @@ const AddForm = (props) => {
                         required={field.required}
                         max={field.max}
                         min={field.min}
+                        step={field.step}
+                      />
+                    </label>
+                  )}
+
+                  { (field.type === 'datetime-local') && (
+                    <label className="conf-step__label conf-step__label-fullsize" htmlFor={field.name} key={field.name}>
+                      {field.title}
+                      <input
+                        className="conf-step__input"
+                        type={field.type}
+                        name={field.name}
+                        onChange={onChangeHandler}
+                        value={field.value}
+                        required={field.required}
                         step={field.step}
                       />
                     </label>
