@@ -41,6 +41,11 @@ function AdminHallsControl(props) {
   const onChangeHandler = (name, value) => onFormChange({ [`${name}`]: value });
 
   const onRemoveFormShowHandler = (id) => {
+    if (halls.data.find((o) => o.id === id).sale) {
+      // eslint-disable-next-line no-alert
+      alert('Ошибка! Нельзя удалить зал, в который открыты продажи');
+      return;
+    }
     onRemoveFormChange({
       id,
       title: `Вы действительно хотите удалить зал «${halls.data.find((o) => o.id === id).title}»?

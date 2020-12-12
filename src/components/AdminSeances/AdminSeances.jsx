@@ -92,7 +92,9 @@ function AdminSeances(props) {
   };
   useEffect(() => {
     if (!movies.savingSuccess) return () => {};
-    saveSeances(seances.data.filter((o) => !o.id || o.removed));
+    saveSeances(seances.data
+      .filter((o) => !halls.data.find((h) => h.id === o.hallID).sale)
+      .filter((o) => !o.id || o.removed));
     setTimeout(() => saveMoviesSuccessClear(), 1000);
     return () => {};
   // eslint-disable-next-line
@@ -326,6 +328,8 @@ function AdminSeances(props) {
           ))}
         </div>
         <p className="conf-step__paragraph" style={{ marginTop: '0px' }}>Нажмите на сеанс для его удаления</p>
+
+        <p className="conf-step__paragraph" style={{ marginTop: '0px' }}>Внимание! Для залов, в которых открыты продажи, изменения в расписании не будут сохранены!</p>
 
         <fieldset className="conf-step__buttons text-center">
           <AcceptinButton

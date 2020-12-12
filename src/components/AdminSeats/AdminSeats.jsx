@@ -51,9 +51,11 @@ function AdminSeats(props) {
       onChangeHall();
     } else if (!halls.data.map((o) => o.id).includes(hallID)) {
       onChangeHall(halls.data[0]);
+    } else {
+      onChangeHall(halls.data.find((o) => o.id === hallID));
     }
     return () => {};
-  }, [halls, hallID, onChangeHall]);
+  }, [halls, halls.data, hallID, onChangeHall]);
 
   const calcStates = useCallback(
     () => {
@@ -109,12 +111,18 @@ function AdminSeats(props) {
   };
 
   const onUpdateHandler = () => {
+    if (halls.data.find((o) => o.id === hallID).sale) {
+      // eslint-disable-next-line no-alert
+      alert('Ошибка! Нельзя изменить зал, в который открыты продажи');
+      return;
+    }
     if (updating) return;
     if (hall) onUpdate(hall);
     if (states) updateStates(states);
   };
 
   const onSeatStateChange = (evt) => {
+    if (hall.sale) return;
     let number;
     try {
       number = Number.parseInt(evt.target.getAttribute('number'), 10);
@@ -149,63 +157,80 @@ function AdminSeats(props) {
             <div className="conf-step__legend">
               <label className="conf-step__label">
                 Рядов, шт
-                <input type="text" className="conf-step__input" placeholder="10" name="rows" value={hall.rows} onChange={onChangeHandler} />
+                <input
+                  type="text"
+                  className="conf-step__input"
+                  placeholder="10"
+                  name="rows"
+                  value={hall.rows}
+                  onChange={onChangeHandler}
+                  disabled={hall.sale}
+                />
               </label>
               <span className="multiplier">x</span>
               <label className="conf-step__label">
                 Мест, шт
-                <input type="text" className="conf-step__input" placeholder="8" name="cols" value={hall.cols} onChange={onChangeHandler} />
+                <input
+                  type="text"
+                  className="conf-step__input"
+                  placeholder="8"
+                  name="cols"
+                  value={hall.cols}
+                  onChange={onChangeHandler}
+                  disabled={hall.sale}
+                />
               </label>
             </div>
+
+            <p className="conf-step__paragraph">Теперь вы можете указать типы кресел на схеме зала:</p>
+            <div className="conf-step__legend">
+              <span className="conf-step__chair conf-step__chair_standart" />
+              — обычные кресла
+              <span className="conf-step__chair conf-step__chair_vip" />
+              — VIP кресла
+              <span className="conf-step__chair conf-step__chair_disabled" />
+              — заблокированные (нет кресла)
+              <p className="conf-step__hint">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
+            </div>
+
+            <div className="conf-step__hall">
+              <div className="conf-step__hall-wrapper">
+                { loading && !loadingError && <Preloader /> }
+                { !loading && loadingError && 'Ошибка' }
+                { !loading && !loadingError && hall && states && rows.map((row) => (
+                  <div className="conf-step__row" key={nanoid()}>
+                    { row.map((seat) => (
+                      <span
+                        className={`conf-step__chair conf-step__chair_${seat.type}`}
+                        number={seat.number}
+                        key={nanoid()}
+                        role="button"
+                        onClick={onSeatStateChange}
+                        onKeyPress={(evt) => { if (evt.key === 'Enter') onSeatStateChange(evt); }}
+                        tabIndex={0}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <fieldset className="conf-step__buttons text-center">
+              <AcceptinButton
+                className="conf-step__button conf-step__button-regular"
+                title="Отмена"
+                onClick={refreshStates}
+              />
+              <AcceptinButton className="conf-step__button conf-step__button-accent" onClick={onUpdateHandler}>
+                { updating && !updatingError && 'Сохраняем...' }
+                { !updating && !updatingSuccess && !updatingError && 'Сохранить' }
+                { updatingSuccess && !updatingError && 'Сохранено!' }
+                { updatingError && 'Ошибка. Попробовать еще' }
+              </AcceptinButton>
+            </fieldset>
           </>
         )}
 
-        <p className="conf-step__paragraph">Теперь вы можете указать типы кресел на схеме зала:</p>
-        <div className="conf-step__legend">
-          <span className="conf-step__chair conf-step__chair_standart" />
-          — обычные кресла
-          <span className="conf-step__chair conf-step__chair_vip" />
-          — VIP кресла
-          <span className="conf-step__chair conf-step__chair_disabled" />
-          — заблокированные (нет кресла)
-          <p className="conf-step__hint">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
-        </div>
-
-        <div className="conf-step__hall">
-          <div className="conf-step__hall-wrapper">
-            { loading && !loadingError && <Preloader /> }
-            { !loading && loadingError && 'Ошибка' }
-            { !loading && !loadingError && hall && states && rows.map((row) => (
-              <div className="conf-step__row" key={nanoid()}>
-                { row.map((seat) => (
-                  <span
-                    className={`conf-step__chair conf-step__chair_${seat.type}`}
-                    number={seat.number}
-                    key={nanoid()}
-                    role="button"
-                    onClick={onSeatStateChange}
-                    onKeyPress={(evt) => { if (evt.key === 'Enter') onSeatStateChange(evt); }}
-                    tabIndex={0}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <fieldset className="conf-step__buttons text-center">
-          <AcceptinButton
-            className="conf-step__button conf-step__button-regular"
-            title="Отмена"
-            onClick={refreshStates}
-          />
-          <AcceptinButton className="conf-step__button conf-step__button-accent" onClick={onUpdateHandler}>
-            { updating && !updatingError && 'Сохраняем...' }
-            { !updating && !updatingSuccess && !updatingError && 'Сохранить' }
-            { updatingSuccess && !updatingError && 'Сохранено!' }
-            { updatingError && 'Ошибка. Попробовать еще' }
-          </AcceptinButton>
-        </fieldset>
       </div>
     </section>
   );
@@ -218,6 +243,7 @@ AdminSeats.propTypes = {
       title: PropTypes.string.isRequired,
       rows: PropTypes.number.isRequired,
       cols: PropTypes.number.isRequired,
+      sale: PropTypes.number.isRequired,
     })),
     loading: PropTypes.bool.isRequired,
     loadingError: PropTypes.shape({ message: PropTypes.string }),
@@ -228,6 +254,7 @@ AdminSeats.propTypes = {
     title: PropTypes.string.isRequired,
     rows: PropTypes.number.isRequired,
     cols: PropTypes.number.isRequired,
+    sale: PropTypes.number.isRequired,
   }),
   hallID: PropTypes.string.isRequired,
   states: PropTypes.arrayOf(PropTypes.shape({

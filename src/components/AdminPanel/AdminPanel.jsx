@@ -40,7 +40,7 @@ const AdminPanel = (props) => {
       <AdminSeats halls={halls} onUpdate={onUpdate} />
       <AdminPrices halls={halls} onUpdate={onUpdate} />
       <AdminSeances halls={halls} />
-      <AdminOpenSale />
+      <AdminOpenSale halls={halls} onUpdate={onUpdate} />
     </>
   );
 };
@@ -54,6 +54,7 @@ AdminPanel.propTypes = {
       cols: PropTypes.number.isRequired,
       price: PropTypes.number.isRequired,
       priceVip: PropTypes.number.isRequired,
+      sale: PropTypes.number.isRequired,
       removing: PropTypes.bool,
       removingError: PropTypes.shape({ message: PropTypes.string }),
     })).isRequired,

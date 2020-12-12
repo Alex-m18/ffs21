@@ -21,6 +21,8 @@ function AdminPrices(props) {
       onChangeHall();
     } else if (!halls.data.map((o) => o.id).includes(hallID)) {
       onChangeHall(halls.data[0]);
+    } else {
+      onChangeHall(halls.data.find((o) => o.id === hallID));
     }
     return () => {};
   }, [halls, hallID, onChangeHall]);
@@ -55,7 +57,15 @@ function AdminPrices(props) {
             <div className="conf-step__legend">
               <label className="conf-step__label">
                 Цена, рублей
-                <input type="text" className="conf-step__input" placeholder="0" name="price" value={hall.price} onChange={onChangeHandler} />
+                <input
+                  type="text"
+                  className="conf-step__input"
+                  placeholder="0"
+                  name="price"
+                  value={hall.price}
+                  onChange={onChangeHandler}
+                  disabled={hall.sale}
+                />
               </label>
               за
               <span className="conf-step__chair conf-step__chair_standart" />
@@ -64,7 +74,15 @@ function AdminPrices(props) {
             <div className="conf-step__legend">
               <label className="conf-step__label">
                 Цена, рублей
-                <input type="text" className="conf-step__input" placeholder="0" name="priceVip" value={hall.priceVip} onChange={onChangeHandler} />
+                <input
+                  type="text"
+                  className="conf-step__input"
+                  placeholder="0"
+                  name="priceVip"
+                  value={hall.priceVip}
+                  onChange={onChangeHandler}
+                  disabled={hall.sale}
+                />
               </label>
               за
               <span className="conf-step__chair conf-step__chair_vip" />
@@ -98,6 +116,7 @@ AdminPrices.propTypes = {
       title: PropTypes.string.isRequired,
       price: PropTypes.number.isRequired,
       priceVip: PropTypes.number.isRequired,
+      sale: PropTypes.number.isRequired,
     })).isRequired,
     updating: PropTypes.bool.isRequired,
     updatingError: PropTypes.PropTypes.shape({ message: PropTypes.string }),
@@ -108,6 +127,7 @@ AdminPrices.propTypes = {
     title: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
     priceVip: PropTypes.number.isRequired,
+    sale: PropTypes.number.isRequired,
   }),
   hallID: PropTypes.string.isRequired,
   onUpdate: PropTypes.func,
