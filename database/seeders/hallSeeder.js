@@ -24,6 +24,7 @@ exports.run = async (db) => {
       cols,
       price,
       priceVip,
+      sale: true,
     });
   }
 

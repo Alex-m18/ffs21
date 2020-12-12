@@ -20,7 +20,6 @@ exports.up = function(db) {
       CREATE TABLE "seances" (
         "id" VARCHAR  PRIMARY KEY,
         "date" datetime  NOT NULL,
-        "state" VARCHAR  NOT NULL,
         "movieID" VARCHAR  NOT NULL,
         "hallID" VARCHAR  NOT NULL,
         FOREIGN KEY (movieID) REFERENCES movies(id)  ON DELETE CASCADE  ON UPDATE RESTRICT,

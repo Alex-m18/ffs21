@@ -22,6 +22,7 @@ exports.up = function(db) {
     cols: { type: 'int', notNull: true, defaultValue: 8 },
     price: { type: 'int', notNull: true, defaultValue: 250 },
     priceVip: { type: 'int', notNull: true, defaultValue: 300 },
+    sale: { type: 'int', notNull: true, defaultValue: false },
   });
 };
 

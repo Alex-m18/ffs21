@@ -85,14 +85,6 @@ const auth = async (ctx, next) => {
   }
 };
 
-router.get('/api/opensales', auth, async (ctx, next) => {
-  const result = await seances.all([], 'state', Model.EQUAL, 'closed')
-    .then((closed) => seances.update(closed.map((o) => ({ ...o, state: 'open' }))))
-    .then(() => ({ success: true }));
-  ctx.status = 204;
-  return fortune(ctx, result);
-});
-
 router.get('/api/seats/:id', auth, async (ctx, next) => {
   const { id } = ctx.params;
   const hall = await halls.findByID(id);
@@ -163,7 +155,6 @@ router.post('/api/seances', auth, async (ctx, next) => {
     movieID: o.movieID,
     hallID: o.hallID,
     date: o.date,
-    state: 'closed',
   }));
 
   const result = await seances
@@ -260,11 +251,12 @@ router.put('/api/hall', auth, async (ctx, next) => {
     cols,
     price,
     priceVip,
+    sale,
   } = ctx.request.body;
   if (!id || !title || !rows || !cols || !price || !priceVip) return;
 
   const hall = await halls
-    .update([{ id, title, rows, cols, price, priceVip }])
+    .update([{ id, title, rows, cols, price, priceVip, sale: Number(sale) }])
     .then(() => halls.findByID(id))
     .catch((err) => err);
 
@@ -357,9 +349,10 @@ router.post('/api/getseances', async (ctx, next) => {
   if (!fromDate || !toDate) return;
 
   const fromDateSeances = await seances.all([], 'date', Model.BIGGER, fromDate);
-  const resultSeances = fromDateSeances.filter((o) => (
-    moment(o.date).isBefore(moment(toDate)) && o.state === 'open'
-  ));
+  const allHalls = await halls.all();
+  const resultSeances = fromDateSeances
+    .filter((o) => allHalls.find((h) => h.id === o.hallID).sale)
+    .filter((o) => moment(o.date).isBefore(moment(toDate)));
 
   return fortune(ctx, resultSeances);
 });

@@ -28,7 +28,6 @@ exports.run = async (db) => {
         movieID,
         hallID: hallsIDs[randomNumber(0, hallsIDs.length - 1)],
         date,
-        state: 'open',
       });
     }
   });
